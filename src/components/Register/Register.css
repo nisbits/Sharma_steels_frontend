@@ -1,0 +1,13 @@
+.register-container{
+    width: 500px;
+    margin: 80px auto;
+}
+.register-container form {
+    border: 1px solid skyblue;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+form button{
+    background-color: skyblue;
+}

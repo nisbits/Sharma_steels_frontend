@@ -1,0 +1,28 @@
+.navbar-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 120px;
+}
+
+.logo{
+    width: 50px;
+    height: 50px;
+}
+
+.logo img{
+    width: 50px;
+    height: 50px;
+}
+
+.nav-buttons{
+    display: flex;
+    gap: 20px;
+}
+
+.nav-buttons button{
+    background-color: lightskyblue;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+}
