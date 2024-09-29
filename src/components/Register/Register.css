@@ -11,3 +11,26 @@
 form button{
     background-color: skyblue;
 }
+/* .form-group {
+    border: 1px solid skyblue;
+    border-radius: 20px;
+    padding: 20px;
+} */
+.form-control {
+    margin-bottom: 10px;
+}
+.otp-form-container{
+    border: 1px solid skyblue;
+    border-radius: 20px;
+    padding: 20px;
+    background-color: #fbf6eb;
+}
+.register-form{
+    background-color: #fbf6eb;
+}
+@media (max-width: 768px) {
+    .register-container{
+        width: 80%;
+        margin: 40px auto;
+    }
+}

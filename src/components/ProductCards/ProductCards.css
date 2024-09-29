@@ -3,6 +3,7 @@
     justify-content: space-between;
     gap: 20px;
     padding: 40px 120px;
+    flex-wrap: wrap
   }
   
   .product-card {
@@ -56,4 +57,14 @@
     color: #333;
     margin-top: 5px;
   }
-  
+  @media (max-width: 768px) {
+    .product-cards-container {
+
+      padding: 24px 16px;
+gap: 10px;
+    }
+    .product-card {
+      width: 48%;
+
+    }
+  }

@@ -1,120 +1,146 @@
-import React, { useState } from 'react';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import React, { useState, useEffect } from 'react';
 import './Register.css';
-
-// Initialize Firebase (replace with your own Firebase config)
-const firebaseConfig = {
-  apiKey: "AIzaSyDme3Zms3VBYrCRxxXI4WeuwfGuF-s1Yco",
-  authDomain: "sharma-steels.firebaseapp.com",
-  projectId: "sharma-steels",
-  storageBucket: "sharma-steels.appspot.com",
-  messagingSenderId: "189236975985",
-  appId: "1:189236975985:web:f146040f57de6989b7bed0",
-  measurementId: "G-71KGDBP8L8"
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
-  const [mobile, setMobile] = useState('');
+  const [phone_no, setPhoneNo] = useState('');
   const [otp, setOtp] = useState('');
-  const [showOtpInput, setShowOtpInput] = useState(true);
+  const [showOtpInput, setShowOtpInput] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [verificationId, setVerificationId] = useState(null);
+  const [timer, setTimer] = useState(180);
+  const [otpError, setOtpError] = useState('');
+
+  // Timer logic to resend OTP
+  useEffect(() => {
+    let countdown;
+    if (showOtpInput && timer > 0) {
+      countdown = setInterval(() => setTimer((prevTimer) => prevTimer - 1), 1000);
+    } else if (timer === 0) {
+      clearInterval(countdown);
+    }
+    return () => clearInterval(countdown);
+  }, [showOtpInput, timer]);
 
   const sendOtp = () => {
-    // Initialize ReCAPTCHA if not already initialized
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        size: 'invisible',
-        callback: function (response) {
-          // reCAPTCHA solved, allow OTP to be sent
-          sendOtp();
-        },
-        'expired-callback': () => {
-          // Reset reCAPTCHA if it expires
-          window.recaptchaVerifier.reset();
-        }
-      });
+    if (phone_no.length !== 10) {
+      toast.error('Please enter a valid 10-digit mobile number');
+      return;
     }
-  
-    // Render the reCAPTCHA
-    window.recaptchaVerifier.render().then(function (widgetId) {
-      window.recaptchaWidgetId = widgetId;
-    });
-  
-    const phoneNumber = `+91${mobile}`; // Modify for your country code
-  
-    firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
-      .then((confirmationResult) => {
-        setVerificationId(confirmationResult.verificationId);
-        setShowOtpInput(true);
+
+    axios.post('http://sharmasteel.in:8080/user-accounts/send-otp/', { phone_no })
+      .then((response) => {
+        console.log('OTP Send Response:', response.data); // Debugging
+
+        // Check if the message field contains "OTP sent successfully"
+        if (response.status === 200 && response.data.message === 'OTP sent successfully') {
+          setShowOtpInput(true);
+          setTimer(180); // Reset timer to 180 seconds
+          toast.success('OTP sent successfully');
+        } else {
+          toast.error('Error sending OTP. Please try again.');
+        }
       })
       .catch((error) => {
-        console.error('Error sending OTP:', error.message);
+        console.error('Error sending OTP:', error.response ? error.response.data : error.message);
+        toast.error('Error sending OTP. Please try again.');
       });
   };
 
-
-
   const verifyOtp = () => {
-    const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, otp);
-    firebase
-      .auth()
-      .signInWithCredential(credential)
-      .then(() => {
-        setShowOtpInput(false);
-        setShowForm(true); // Show the rest of the form
-      })
-      .catch((error) => {
-        console.log('Error verifying OTP', error);
-      });
+    if (!otp) {
+      toast.error('Please enter the OTP');
+      return;
+    }
+
+    axios.post('http://sharmasteel.in:8080/user-accounts/verify-otp/', { phone_no, otp })
+    .then((response) => {
+      console.log('OTP Verification Response:', response.data);
+
+      // Check if the message field contains "OTP verified successfully"
+      if (response.status === 200 && response.data.message === 'OTP verified successfully') {
+        setShowForm(true); // Show form if OTP is correct
+        setShowOtpInput(false); // Hide OTP input fields
+        toast.success('OTP verified successfully');
+      } else {
+        // Display the error message sent from the API
+        setOtpError(response.data.message || 'OTP verification failed. Please try again.');
+      }
+    })
+    .catch((error) => {
+      console.error('Error verifying OTP:', error.response ? error.response.data : error.message);
+      
+      // Display the dynamic error message returned by the API
+      setOtpError(error.response?.data?.message || 'Error verifying OTP. Please try again.');
+      toast.error(error.response?.data?.message || 'Error verifying OTP. Please try again.');
+    });
+};
+
+  const resendOtp = () => {
+    setTimer(180);
+    sendOtp();
   };
 
   return (
     <div className='register-container'>
-      {showOtpInput && (
-        <div className="otp-container">
+      <ToastContainer /> {/* Include ToastContainer for toast notifications */}
+
+      {!showForm && (
+        <div className='otp-form-container'>
           <div className="form-group">
             <label htmlFor="inputMobile">Mobile Number</label>
             <input
               type="tel"
               className="form-control"
               id="inputMobile"
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
+              value={phone_no}
+              onChange={(e) => setPhoneNo(e.target.value)}
               placeholder="Enter Mobile Number"
               pattern="[0-9]{10}"
               required
             />
-            <button type="button" className="btn btn-primary" onClick={sendOtp}>
-              Send OTP
-            </button>
+            {!showOtpInput && (
+              <button type="button" className="btn btn-primary" onClick={sendOtp}>
+                Send OTP
+              </button>
+            )}
           </div>
-          <div id="recaptcha-container"></div>
 
-          <div className="form-group" style={{ marginTop: '10px' }}>
-            <label htmlFor="inputOtp">OTP</label>
-            <input
-              type="text"
-              className="form-control"
-              id="inputOtp"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              placeholder="Enter OTP"
-            />
-            <button type="button" className="btn btn-success" onClick={verifyOtp}>
-              Verify OTP
-            </button>
-          </div>
+          {showOtpInput && (
+            <>
+              <div className="form-group">
+                <label htmlFor="inputOtp">Enter OTP</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="inputOtp"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder="Enter OTP"
+                  required
+                />
+                <button type="button" className="btn btn-success" onClick={verifyOtp}>
+                  Verify OTP
+                </button>
+              </div>
+
+              {otpError && <p className="error-text">{otpError}</p>}
+
+              <div className="resend-otp">
+                {timer > 0 ? (
+                  <p>Resend OTP in {timer} seconds</p>
+                ) : (
+                  <button onClick={resendOtp} className="btn btn-secondary">Resend OTP</button>
+                )}
+              </div>
+            </>
+          )}
         </div>
       )}
 
       {showForm && (
-        <form>
+        <form className='register-form'>
           <div className="form-row">
             <div className="form-group col-md-6">
               <label htmlFor="inputName">Name</label>
@@ -158,9 +184,18 @@ const Register = () => {
               />
             </div>
           </div>
-          <button type="submit" className="btn btn-primary">
-            Register
-          </button>
+
+          <div className="form-row">
+            <div className="form-group col-md-6">
+              <label htmlFor="userCategory">User Category</label>
+              <select className="form-control" id="userCategory" required>
+                <option value="Normal User">Normal User (default)</option>
+                <option value="Contractor">Contractor</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" className="btn btn-primary">Register</button>
         </form>
       )}
     </div>
