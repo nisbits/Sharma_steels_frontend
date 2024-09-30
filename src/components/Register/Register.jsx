@@ -12,6 +12,12 @@ const Register = () => {
   const [timer, setTimer] = useState(180);
   const [otpError, setOtpError] = useState('');
 
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [userCategory, setUserCategory] = useState('Normal User');
+  const [passwordError, setPasswordError] = useState('');
+
   // Timer logic to resend OTP
   useEffect(() => {
     let countdown;
@@ -31,9 +37,6 @@ const Register = () => {
 
     axios.post('http://sharmasteel.in:8080/user-accounts/send-otp/', { phone_no })
       .then((response) => {
-        console.log('OTP Send Response:', response.data); // Debugging
-
-        // Check if the message field contains "OTP sent successfully"
         if (response.status === 200 && response.data.message === 'OTP sent successfully') {
           setShowOtpInput(true);
           setTimer(180); // Reset timer to 180 seconds
@@ -43,7 +46,6 @@ const Register = () => {
         }
       })
       .catch((error) => {
-        console.error('Error sending OTP:', error.response ? error.response.data : error.message);
         toast.error('Error sending OTP. Please try again.');
       });
   };
@@ -56,35 +58,50 @@ const Register = () => {
 
     axios.post('http://sharmasteel.in:8080/user-accounts/verify-otp/', { phone_no, otp })
     .then((response) => {
-      console.log('OTP Verification Response:', response.data);
-
-      // Check if the message field contains "OTP verified successfully"
       if (response.status === 200 && response.data.message === 'OTP verified successfully') {
-        setShowForm(true); // Show form if OTP is correct
-        setShowOtpInput(false); // Hide OTP input fields
+        setShowForm(true);
+        setShowOtpInput(false);
         toast.success('OTP verified successfully');
       } else {
-        // Display the error message sent from the API
         setOtpError(response.data.message || 'OTP verification failed. Please try again.');
       }
     })
     .catch((error) => {
-      console.error('Error verifying OTP:', error.response ? error.response.data : error.message);
-      
-      // Display the dynamic error message returned by the API
       setOtpError(error.response?.data?.message || 'Error verifying OTP. Please try again.');
       toast.error(error.response?.data?.message || 'Error verifying OTP. Please try again.');
     });
-};
+  };
 
   const resendOtp = () => {
     setTimer(180);
     sendOtp();
   };
 
+  const handleRegister = (e) => {
+    e.preventDefault();
+
+
+    if (!name || !password || !confirmPassword || !userCategory) {
+      toast.error('Please fill out all required fields.');
+      return;
+    }
+
+
+    if (password !== confirmPassword) {
+      setPasswordError('Passwords do not match');
+      toast.error('Passwords do not match');
+      return;
+    }
+
+
+    setPasswordError(''); 
+    toast.success('Registration successful');
+    // Add axios call for registration here if needed
+  };
+
   return (
     <div className='register-container'>
-      <ToastContainer /> {/* Include ToastContainer for toast notifications */}
+      <ToastContainer />
 
       {!showForm && (
         <div className='otp-form-container'>
@@ -140,7 +157,7 @@ const Register = () => {
       )}
 
       {showForm && (
-        <form className='register-form'>
+        <form className='register-form' onSubmit={handleRegister}>
           <div className="form-row">
             <div className="form-group col-md-6">
               <label htmlFor="inputName">Name</label>
@@ -148,6 +165,8 @@ const Register = () => {
                 type="text"
                 className="form-control"
                 id="inputName"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Full Name"
                 required
               />
@@ -169,6 +188,8 @@ const Register = () => {
                 type="password"
                 className="form-control"
                 id="inputPassword4"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 required
               />
@@ -179,16 +200,25 @@ const Register = () => {
                 type="password"
                 className="form-control"
                 id="inputConfirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm Password"
                 required
               />
+              {passwordError && <p className="error-text">{passwordError}</p>}
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group col-md-6">
               <label htmlFor="userCategory">User Category</label>
-              <select className="form-control" id="userCategory" required>
+              <select
+                className="form-control"
+                id="userCategory"
+                value={userCategory}
+                onChange={(e) => setUserCategory(e.target.value)}
+                required
+              >
                 <option value="Normal User">Normal User (default)</option>
                 <option value="Contractor">Contractor</option>
               </select>
