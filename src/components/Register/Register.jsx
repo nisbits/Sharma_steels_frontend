@@ -1,28 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import './Register.css';
-import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState, useEffect } from "react";
+import "./Register.css";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [phone_no, setPhoneNo] = useState('');
-  const [otp, setOtp] = useState('');
+  const [phone_no, setPhoneNo] = useState("");
+  const [otp, setOtp] = useState("");
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [timer, setTimer] = useState(180);
-  const [otpError, setOtpError] = useState('');
+  const [otpError, setOtpError] = useState("");
 
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [userCategory, setUserCategory] = useState('Normal User');
-  const [passwordError, setPasswordError] = useState('');
-
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [userCategory, setUserCategory] = useState("Normal User");
+  const [passwordError, setPasswordError] = useState("");
+  const navigate = useNavigate();
   // Timer logic to resend OTP
   useEffect(() => {
     let countdown;
     if (showOtpInput && timer > 0) {
-      countdown = setInterval(() => setTimer((prevTimer) => prevTimer - 1), 1000);
+      countdown = setInterval(
+        () => setTimer((prevTimer) => prevTimer - 1),
+        1000
+      );
     } else if (timer === 0) {
       clearInterval(countdown);
     }
@@ -31,45 +36,65 @@ const Register = () => {
 
   const sendOtp = () => {
     if (phone_no.length !== 10) {
-      toast.error('Please enter a valid 10-digit mobile number');
+      toast.error("Please enter a valid 10-digit mobile number");
       return;
     }
 
-    axios.post('http://sharmasteel.in:8080/user-accounts/send-otp/', { phone_no })
+    axios
+      .post("http://sharmasteel.in:8080/user-accounts/send-otp/", { phone_no })
       .then((response) => {
-        if (response.status === 200 && response.data.message === 'OTP sent successfully') {
+        if (
+          response.status === 200 &&
+          response.data.message === "OTP sent successfully"
+        ) {
           setShowOtpInput(true);
-          setTimer(180); // Reset timer to 180 seconds
-          toast.success('OTP sent successfully');
+          setTimer(180); 
+          toast.success("OTP sent successfully");
         } else {
-          toast.error('Error sending OTP. Please try again.');
+          toast.error("Error sending OTP. Please try again.");
         }
       })
       .catch((error) => {
-        toast.error('Error sending OTP. Please try again.');
+        toast.error("Error sending OTP. Please try again.");
       });
   };
 
   const verifyOtp = () => {
     if (!otp) {
-      toast.error('Please enter the OTP');
+      toast.error("Please enter the OTP");
       return;
     }
 
-    axios.post('http://sharmasteel.in:8080/user-accounts/verify-otp/', { phone_no, otp })
-    .then((response) => {
-      if (response.status === 200 && response.data.message === 'OTP verified successfully') {
-        setShowForm(true);
-        setShowOtpInput(false);
-        toast.success('OTP verified successfully');
-      } else {
-        setOtpError(response.data.message || 'OTP verification failed. Please try again.');
-      }
-    })
-    .catch((error) => {
-      setOtpError(error.response?.data?.message || 'Error verifying OTP. Please try again.');
-      toast.error(error.response?.data?.message || 'Error verifying OTP. Please try again.');
-    });
+    axios
+      .post("http://sharmasteel.in:8080/user-accounts/verify-otp/", {
+        phone_no,
+        otp,
+      })
+      .then((response) => {
+        if (
+          response.status === 200 &&
+          response.data.message === "OTP verified successfully"
+        ) {
+          setShowForm(true);
+          setShowOtpInput(false);
+          toast.success("OTP verified successfully");
+        } else {
+          setOtpError(
+            response.data.message ||
+              "OTP verification failed. Please try again."
+          );
+        }
+      })
+      .catch((error) => {
+        setOtpError(
+          error.response?.data?.message ||
+            "Error verifying OTP. Please try again."
+        );
+        toast.error(
+          error.response?.data?.message ||
+            "Error verifying OTP. Please try again."
+        );
+      });
   };
 
   const resendOtp = () => {
@@ -80,31 +105,63 @@ const Register = () => {
   const handleRegister = (e) => {
     e.preventDefault();
 
-
     if (!name || !password || !confirmPassword || !userCategory) {
-      toast.error('Please fill out all required fields.');
+      toast.error("Please fill out all required fields.");
       return;
     }
-
 
     if (password !== confirmPassword) {
-      setPasswordError('Passwords do not match');
-      toast.error('Passwords do not match');
+      setPasswordError("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
+    setPasswordError("");
 
-    setPasswordError(''); 
-    toast.success('Registration successful');
-    // Add axios call for registration here if needed
+    const registrationData = {
+      first_name: name.split(" ")[0], // Assuming the first name is the first word of the full name
+      last_name: name.split(" ")[1] || "", // Assuming the last name is the second word of the full name
+      email,
+      password,
+      phone_number: phone_no,
+      user_catagory: userCategory,
+    };
+
+    axios
+    .post("http://sharmasteel.in:8080/user-accounts/register/", registrationData)
+    .then((response) => {
+      if (response.status === 200) {
+        toast.success("Registration successful");
+        setTimeout(() => {
+          navigate("/login"); // Redirect to the login page after 2 seconds
+        }, 2000);
+      } else {
+        toast.error("Registration failed. Please try again.");
+      }
+    })
+    .catch((error) => {
+      console.log(error.response?.data); // Check for detailed error
+  
+      // Display the exact error message from the backend
+      const backendMessage = error.response?.data?.message;
+  
+      if (backendMessage) {
+        toast.error(backendMessage);
+      } else {
+        toast.error("Error occurred during registration. Please try again.");
+      }
+    });
+  
+     
   };
+  
 
   return (
-    <div className='register-container'>
+    <div className="register-container">
       <ToastContainer />
 
       {!showForm && (
-        <div className='otp-form-container'>
+        <div className="otp-form-container">
           <div className="form-group">
             <label htmlFor="inputMobile">Mobile Number</label>
             <input
@@ -118,7 +175,11 @@ const Register = () => {
               required
             />
             {!showOtpInput && (
-              <button type="button" className="btn btn-primary" onClick={sendOtp}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={sendOtp}
+              >
                 Send OTP
               </button>
             )}
@@ -137,7 +198,11 @@ const Register = () => {
                   placeholder="Enter OTP"
                   required
                 />
-                <button type="button" className="btn btn-success" onClick={verifyOtp}>
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={verifyOtp}
+                >
                   Verify OTP
                 </button>
               </div>
@@ -148,7 +213,9 @@ const Register = () => {
                 {timer > 0 ? (
                   <p>Resend OTP in {timer} seconds</p>
                 ) : (
-                  <button onClick={resendOtp} className="btn btn-secondary">Resend OTP</button>
+                  <button onClick={resendOtp} className="btn btn-secondary">
+                    Resend OTP
+                  </button>
                 )}
               </div>
             </>
@@ -157,10 +224,10 @@ const Register = () => {
       )}
 
       {showForm && (
-        <form className='register-form' onSubmit={handleRegister}>
+        <form className="register-form" onSubmit={handleRegister}>
           <div className="form-row">
             <div className="form-group col-md-6">
-              <label htmlFor="inputName">Name</label>
+              <label htmlFor="inputName">Full Name</label>
               <input
                 type="text"
                 className="form-control"
@@ -172,12 +239,15 @@ const Register = () => {
               />
             </div>
             <div className="form-group col-md-6">
-              <label htmlFor="inputEmail4">Email (Optional)</label>
+              <label htmlFor="inputEmail4">Email</label>
               <input
                 type="email"
                 className="form-control"
                 id="inputEmail4"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
+                required
               />
             </div>
           </div>
@@ -225,7 +295,9 @@ const Register = () => {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary">Register</button>
+          <button type="submit" className="btn btn-primary">
+            Register
+          </button>
         </form>
       )}
     </div>
