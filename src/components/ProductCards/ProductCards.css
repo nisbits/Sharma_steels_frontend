@@ -38,11 +38,14 @@
   
   .product-info {
     padding-top: 10px;
+    text-align: left;
   }
   
   .product-price {
     color: #e74c3c;
     font-size: 1.2em;
+    display: flex;
+    flex-direction: column-reverse;
   }
   
   .old-price {
@@ -56,6 +59,14 @@
     font-size: 0.9em;
     color: #333;
     margin-top: 5px;
+  }
+  .product-info h2{
+    font-size: 20px;
+  font-weight: 700;
+  }
+  .product-price span{
+    margin: 0px;
+    padding: 0px;
   }
   @media (max-width: 768px) {
     .product-cards-container {

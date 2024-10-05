@@ -5,16 +5,20 @@ import Login from './components/Login/Login';
 import Navbar from './components/Navbar/Navbar';
 import Register from './components/Register/Register';
 import Home from './components/Home/Home';
+import ProductsList from './components/ProductsList/ProductsList'; // Import ProductsList component
+import ProductCategory from './components/ProductCategory/ProductCategory'; // Import ProductCategory component
 
 function App() {
   return (
     <Router>
       <div className="App">
-        <Navbar/>
+        <Navbar />
         <Routes>
-          <Route path="/" element={<Home/>}/>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/products" element={<ProductsList />} /> {/* Route for ProductsList */}
+          <Route path="/category/:categoryName" element={<ProductCategory />} /> {/* Dynamic route for ProductCategory */}
         </Routes>
       </div>
     </Router>

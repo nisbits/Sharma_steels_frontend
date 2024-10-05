@@ -1,0 +1,31 @@
+.product-list-item{
+    padding: 15px;
+    width: 25%;
+    background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 10px;
+  width: 18%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.product-category-container{
+    text-align: center;
+    padding: 40px 120px;
+}
+
+.product-category-container h2{
+    margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+    .product-category-container{
+        padding: 20px 16px;
+    }
+    .product-list-item {
+        width: 100%;}
+        .product-category-container ul{
+            margin: 0px;
+            padding:0px;
+        }
+}

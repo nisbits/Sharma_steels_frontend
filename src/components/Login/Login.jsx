@@ -10,18 +10,27 @@ const Login = () => {
 
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
-    
+    console.log("Refresh Token:", refreshToken);
+    if (!refreshToken) {
+      setError('Session expired. Please log in again.');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      navigate('/login');
+      return null;
+    }
+
+  
     try {
       const response = await fetch('http://sharmasteel.in:8080/user-accounts/token/refresh/', {
-        method: 'POST',
+        method: 'POST', 
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ refresh: refreshToken }),
+        body: JSON.stringify({ refresh: refreshToken }), 
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         localStorage.setItem('accessToken', data.access);
         return data.access;
@@ -41,6 +50,7 @@ const Login = () => {
       return null;
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

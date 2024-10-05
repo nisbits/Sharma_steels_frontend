@@ -1,60 +1,82 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './ProductCards.css';
-import productImage from '../../Assets/images/lights-89.jpg'
+import productPlaceholder from '../../Assets/images/lights-89.jpg'; // Fallback image if no image available
+
 const ProductCards = () => {
-  const products = [
-    {
-      id: 1,
-      image: productImage, // Replace with actual image paths
-      discount: '-5%',
-      price: '₹3,500.00',
-      oldPrice: '₹3,700.00',
-      title: 'WPC Doors (75*36inch)',
-    },
-    {
-      id: 2,
-      image: productImage,
-      discount: '-7%',
-      price: '₹2,500.00',
-      oldPrice: '₹2,700.00',
-      title: 'WPC Doors (72*26inch)',
-    },
-    {
-      id: 3,
-      image: productImage,
-      price: '₹54.10 – ₹160.50 Per Sq.ft',
-      title: 'Century Sainik Plywood 710',
-    },
-    {
-      id: 4,
-      image: productImage,
-      price: '₹354.00 Per Sft',
-      title: 'Veneered Door',
-    },
-    {
-      id: 5,
-      image: productImage,
-      discount: '-9%',
-      price: '₹246.00 Per Sft',
-      oldPrice: '₹270.00',
-      title: 'Laminated Doors',
-    },
-  ];
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch data from the API
+    fetch('http://sharmasteel.in:8080/products/product-listing/Home-page/')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setProducts(data.products || []); // Assuming the API returns an array of products
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  const baseUrl = 'http://sharmasteel.in:8080'; // Base URL for images
 
   return (
     <div className="product-cards-container">
-      {products.map((product) => (
-        <div key={product.id} className="product-card">
+      {products.map((product, index) => (
+        <div key={index} className="product-card">
           <div className="product-image">
-            <img src={product.image} alt={product.title} />
-            {product.discount && <div className="discount-badge">{product.discount}</div>}
+            <img 
+              src={product.product_image_main ? `${baseUrl}${product.product_image_main}` : productPlaceholder} 
+              alt={product.specification} 
+              style={{ maxWidth: '100%', height: 'auto' }} // Adjust styling as needed
+            />
+            {product.discount && <div className="discount-badge">-{product.discount}%</div>}
           </div>
           <div className="product-info">
+            <h2>{product.brand_name}</h2>
+            <p className="product-title">{product.specification}</p>
+
+            {/* Price Display Logic */}
             <h3 className="product-price">
-              {product.price}{' '}
-              {product.oldPrice && <span className="old-price">{product.oldPrice}</span>}
+              {product.discount ? (
+                <>
+                  ₹{product.selling_price}{' '}
+                  {product.mrp && (
+                    <span className="old-price" style={{ textDecoration: 'line-through' }}>
+                      ₹{product.mrp}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  ₹{product.mrp}
+                </>
+              )}
             </h3>
-            <p className="product-title">{product.title}</p>
+
+            {/* Displaying unit information */}
+            {product.unit_of_measurement && (
+              <p className="product-unit">
+                Unit: {product.unit_of_measurement} {/* per bag or kg */}
+              </p>
+            )}
           </div>
         </div>
       ))}
