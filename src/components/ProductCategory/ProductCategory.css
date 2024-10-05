@@ -8,7 +8,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
+.product-list{
+    display: flex;
+    gap: 20px;
+    padding-left: 0px;
 
+}
 .product-category-container{
     text-align: center;
     padding: 40px 120px;
@@ -17,7 +22,9 @@
 .product-category-container h2{
     margin-bottom: 30px;
 }
-
+.product-category-container h2 img{
+    width: 10%;
+}
 @media (max-width: 768px) {
     .product-category-container{
         padding: 20px 16px;
@@ -27,5 +34,11 @@
         .product-category-container ul{
             margin: 0px;
             padding:0px;
+            display: flex;
+    flex-direction: column;
+    gap: 16px;
+        }
+        .searchImage{
+            width: 50%;
         }
 }

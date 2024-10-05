@@ -47,7 +47,14 @@ const ProductCards = () => {
               alt={product.specification} 
               style={{ maxWidth: '100%', height: 'auto' }} // Adjust styling as needed
             />
-            {product.discount && <div className="discount-badge">-{product.discount}%</div>}
+           {product.discount !== undefined && product.discount !== null && !isNaN(product.discount) && (
+  <div className="discount-badge">
+    {Number(product.discount) % 1 === 0
+      ? `-${Math.floor(product.discount)}%`
+      : `-${Number(product.discount).toFixed(2)}%`}
+  </div>
+)}
+
           </div>
           <div className="product-info">
             <h2>{product.brand_name}</h2>
@@ -57,26 +64,21 @@ const ProductCards = () => {
             <h3 className="product-price">
               {product.discount ? (
                 <>
-                  ₹{product.selling_price}{' '}
+                  ₹{product.selling_price}{' '}/{product.unit_of_measurement}
                   {product.mrp && (
                     <span className="old-price" style={{ textDecoration: 'line-through' }}>
-                      ₹{product.mrp}
+                      ₹{product.mrp}/{product.unit_of_measurement}
                     </span>
                   )}
                 </>
               ) : (
                 <>
-                  ₹{product.mrp}
+                  ₹{product.mrp}/ {product.unit_of_measurement}
                 </>
               )}
             </h3>
 
-            {/* Displaying unit information */}
-            {product.unit_of_measurement && (
-              <p className="product-unit">
-                Unit: {product.unit_of_measurement} {/* per bag or kg */}
-              </p>
-            )}
+           
           </div>
         </div>
       ))}

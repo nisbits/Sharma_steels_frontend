@@ -56,13 +56,13 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://sharmasteel.in:8080/user-accounts/token/', {
+      const response = await fetch('http://sharmasteel.in:8080/user-accounts/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username: mobile,
+          phone_no: mobile,
           password: password,
         }),
       });
@@ -83,11 +83,10 @@ const Login = () => {
     }
   };
 
-  // Function to handle API requests with token refresh logic
+
   const fetchDataWithToken = async (url, options = {}) => {
     let accessToken = localStorage.getItem('accessToken');
 
-    // Set the Authorization header with the current access token
     options.headers = {
       ...options.headers,
       Authorization: `Bearer ${accessToken}`,
@@ -95,12 +94,11 @@ const Login = () => {
 
     let response = await fetch(url, options);
 
-    // If the token is expired (403/401 response), refresh it and retry the request
     if (response.status === 401 || response.status === 403) {
       accessToken = await refreshToken();
       if (accessToken) {
         options.headers.Authorization = `Bearer ${accessToken}`;
-        response = await fetch(url, options); // Retry with new token
+        response = await fetch(url, options); 
       }
     }
 

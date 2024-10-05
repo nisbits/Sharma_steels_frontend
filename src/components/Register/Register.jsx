@@ -267,7 +267,6 @@ const Register = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
-                required
               />
             </div>
             <div className="form-group col-md-6">

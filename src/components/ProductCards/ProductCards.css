@@ -1,6 +1,5 @@
 .product-cards-container {
     display: flex;
-    justify-content: space-between;
     gap: 20px;
     padding: 40px 120px;
     flex-wrap: wrap
@@ -42,7 +41,7 @@
   }
   
   .product-price {
-    color: #e74c3c;
+    color: green;
     font-size: 1.2em;
     display: flex;
     flex-direction: column-reverse;
