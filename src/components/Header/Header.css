@@ -1,7 +1,19 @@
 .header-container{
     width: 100%;
+    position: relative;
 }
 
 .header-container img{
     width: 100%;
+}
+
+.header-container h1{
+    position: absolute;
+    top: 20px;
+    left: 43%;
+    color: white;
+    text-decoration: underline;
+    background: black;
+    padding: 10px;
+    border-radius: 31px;
 }

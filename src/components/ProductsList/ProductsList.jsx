@@ -7,7 +7,7 @@ const ProductsList = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();  // Hook to navigate programmatically
+  const navigate = useNavigate();  
 
   useEffect(() => {
     // Fetch categories from the API
@@ -42,20 +42,24 @@ const ProductsList = () => {
   }
 
   const handleCategoryClick = (category) => {
-    navigate(`/category/${category}`); 
+    navigate(`/category/${category.id}`); // Use the category name for navigation
   };
 
   return (
     <div className="products-container">
       <ul className="products-list">
-        {categories.map((category, index) => (
+        {categories.map((category) => (
           <li
-            key={index}
+            key={category.id} // Use a unique ID
             className="products-list-item"
             onClick={() => handleCategoryClick(category)}  
           >
-            <img src={cementImage} alt={category} />
-            <h3>{category}</h3>
+            <img 
+              src={category.catagory_image ? `http://Sharmasteel.in:8080${category.catagory_image}` : cementImage} 
+              alt={category.catagory || 'Category'} 
+              style={{ maxWidth: '100%', height: 'auto' }}
+            />
+            <h3>{category.catagory || 'Unnamed Category'}</h3>
           </li>
         ))}
       </ul>

@@ -1,25 +1,21 @@
-/* Container for the product list */
 .products-container {
     padding: 20px;
-    overflow-x: auto; /* Enable horizontal scrolling */
-    overflow-y: hidden; /* Hide vertical scrolling */
-    white-space: nowrap; /* Prevent items from wrapping to the next line */
-    display: block; /* Ensure the container is a block-level element */
-    width: 100%; /* Ensure the container takes up the full width */
-    box-sizing: border-box; /* Include padding in the container's width calculation */
-
-    /* Hide scrollbar but still allow scrolling */
-    -ms-overflow-style: none;  /* Internet Explorer and Edge */
-    scrollbar-width: none;  /* Firefox */
+    overflow-x: auto; 
+    overflow-y: hidden; 
+    white-space: nowrap;
+    display: block; 
+    width: 100%; 
+    box-sizing: border-box; 
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
 }
 
 .products-container::-webkit-scrollbar {
-    display: none; /* Hide scrollbar in Chrome, Safari, and other WebKit browsers */
+    display: none; 
 }
 
-/* Ensure the product list items align horizontally */
 .products-list {
-    display: inline-flex; /* Ensure horizontal alignment of the items */
+    display: inline-flex; 
     list-style-type: none; 
     padding: 0; 
     margin: 0;
@@ -37,7 +33,6 @@
     margin: 0px;
 }
 
-/* Mobile view adjustments */
 @media (max-width: 768px) {
   .products-container {
     padding: 10px;

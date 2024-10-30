@@ -7,6 +7,8 @@ import Register from './components/Register/Register';
 import Home from './components/Home/Home';
 import ProductsList from './components/ProductsList/ProductsList'; // Import ProductsList component
 import ProductCategory from './components/ProductCategory/ProductCategory'; // Import ProductCategory component
+import ProductDetail from './components/ProductDetail/ProductDetail';
+import Cart from './components/Cart/Cart';
 
 function App() {
   return (
@@ -17,9 +19,12 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/products" element={<ProductsList />} /> {/* Route for ProductsList */}
-          <Route path="/category/:categoryName" element={<ProductCategory />} /> {/* Dynamic route for ProductCategory */}
-        </Routes>
+          <Route path="/products" element={<ProductsList />} />
+          <Route path="/category/:id" element={<ProductCategory />} />
+          <Route path="/product_detail/:productId" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart  />} />
+          
+                  </Routes>
       </div>
     </Router>
   );

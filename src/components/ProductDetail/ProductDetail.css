@@ -1,0 +1,104 @@
+.product-div {
+    padding: 50px 120px;
+    background-color: #f9f9f9;
+    font-family: Arial, sans-serif;
+}
+
+.product-detail-container {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+}
+
+.product-detail-img-container {
+    display: flex;
+    gap: 28px;
+    overflow-x: auto;
+    width: 100%;
+    max-width: 438px;
+    height: auto;
+    background-color: #cbcbcb;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    scroll-behavior: smooth;
+}
+
+.product-detail-img-container img {
+    width: 400px;
+    height: auto;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0; /* Ensures images don’t shrink */
+}
+
+/* .product-detail-img-container img:hover {
+    transform: scale(1.05);
+} */
+
+.product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    color: #333;
+}
+
+.add-buy-container {
+    display: flex;
+    gap: 20px;
+}
+
+.add-button {
+    background-color: orange;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-button:hover {
+    background-color: darkorange;
+}
+
+.buy-now {
+    background-color: green;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.buy-now:hover {
+    background-color: darkgreen;
+}
+
+@media (max-width: 768px) {
+    .product-div {
+        padding: 20px 16px;
+    }
+    .product-detail-container {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+    .product-details {
+        width: 100%;
+        text-align: center;
+    }
+    .product-detail-img-container {
+        width: 100%;
+        max-width: 100%;
+    }
+    .add-buy-container {
+        justify-content: center;
+    }
+    .product-detail-img-container img {
+        width: 306px;
+    }
+}

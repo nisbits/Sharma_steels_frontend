@@ -35,7 +35,7 @@ const ProductCards = () => {
     return <div>Error: {error}</div>;
   }
 
-  const baseUrl = 'http://sharmasteel.in:8080'; // Base URL for images
+  const baseUrl = 'http://sharmasteel.in:8080'; 
 
   return (
     <div className="product-cards-container">
