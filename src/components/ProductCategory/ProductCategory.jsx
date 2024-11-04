@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams, useNavigate, useLocation } from 'react-router-dom'; // Import useNavigate
 import './ProductCategory.css';
 import searchImage from '../../Assets/images/search.jpeg';
 import cementImage from '../../Assets/images/cement.jpeg';
 
-const ProductCategory = () => {
+const ProductCategory = ({}) => {
   const { id } = useParams();
-  const [products, setProducts] = useState([]);
+  const location = useLocation(); // Get the state from the navigation  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate(); // Initialize navigate
+  const [products, setProducts] = useState([]);
+
 
   useEffect(() => {
     fetch(`http://sharmasteel.in:8080/products/product-listing/catagory/${encodeURIComponent(id)}`)
@@ -37,21 +39,23 @@ const ProductCategory = () => {
 
   const baseUrl = 'http://sharmasteel.in:8080';
 
-  // Click handler to navigate to product detail page
   const handleProductClick = (productId) => {
     navigate(`/product_detail/${productId}`);
   };
 
   return (
     <div className="product-category-container">
-      <h2><img src={cementImage} alt="Category" />Category {id}</h2>
+      {
+        console.log('Category Name ===>>>',location.state?.categoryName)
+      }
+      <h2><img src={cementImage} alt="Category" />{location.state?.categoryName}</h2>
       <ul className="product-list">
         {products.length > 0 ? (
           products.map((product) => (
             <div
-              key={product.product_id} // Use product_id as the unique key
+              key={product.product_id} 
               className="product-list-item"
-              onClick={() => handleProductClick(product.product_id)} // Attach click handler
+              onClick={() => handleProductClick(product.product_id)} 
             >
               {product.product_image_main ? (
                 <img 
@@ -67,22 +71,20 @@ const ProductCategory = () => {
               <p className="product-price">
                 {product.discount ? (
                   <>
-                    ₹{product.selling_price}{' '}
+                    ₹{product.selling_price}/{product.unit_of_measurement}{' '}
                     {product.mrp && (
                       <span className="old-price" style={{ textDecoration: 'line-through' }}>
-                        ₹{product.mrp}
+                        ₹{product.mrp}/{product.unit_of_measurement}
                       </span>
                     )}
                   </>
                 ) : (
                   <>
-                    ₹{product.mrp}
+                    ₹{product.mrp}/{product.unit_of_measurement}
                   </>
                 )}
               </p>
-              {product.unit_of_measurement && (
-                <p>Unit: {product.unit_of_measurement}</p>
-              )}
+              
             </div>
           ))
         ) : (

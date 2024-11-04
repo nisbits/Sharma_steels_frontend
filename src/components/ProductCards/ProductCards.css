@@ -13,6 +13,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: relative;
+    cursor: pointer;
   }
   
   .product-image {
@@ -22,7 +23,8 @@
   
   .product-image img {
     max-width: 100%;
-    height: auto;
+    /* height: auto; */
+    height: 200px;
   }
   
   .discount-badge {

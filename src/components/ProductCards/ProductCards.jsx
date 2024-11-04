@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './ProductCards.css';
 import productPlaceholder from '../../Assets/images/lights-89.jpg'; // Fallback image if no image available
+import { useNavigate } from 'react-router-dom';
 
 const ProductCards = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch data from the API
     fetch('http://sharmasteel.in:8080/products/product-listing/Home-page/')
       .then(response => {
         if (!response.ok) {
@@ -17,7 +18,7 @@ const ProductCards = () => {
         return response.json();
       })
       .then(data => {
-        setProducts(data.products || []); // Assuming the API returns an array of products
+        setProducts(data.products || []);
         setLoading(false);
       })
       .catch(error => {
@@ -35,17 +36,21 @@ const ProductCards = () => {
     return <div>Error: {error}</div>;
   }
 
+  const handleProductClick = (productId) => {
+    navigate(`/product_detail/${productId}`); 
+  };
   const baseUrl = 'http://sharmasteel.in:8080'; 
 
   return (
     <div className="product-cards-container">
       {products.map((product, index) => (
-        <div key={index} className="product-card">
+        <div key={index} className="product-card"
+        onClick={() => handleProductClick(product.product_id)}>
           <div className="product-image">
             <img 
               src={product.product_image_main ? `${baseUrl}${product.product_image_main}` : productPlaceholder} 
               alt={product.specification} 
-              style={{ maxWidth: '100%', height: 'auto' }} // Adjust styling as needed
+              // style={{ maxWidth: '100%', height: 'auto' }} // Adjust styling as needed
             />
            {product.discount !== undefined && product.discount !== null && !isNaN(product.discount) && (
   <div className="discount-badge">

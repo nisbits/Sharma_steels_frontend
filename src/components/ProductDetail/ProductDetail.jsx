@@ -11,19 +11,17 @@ const ProductDetail = ({ productId }) => {
             .then(response => {
                 const productData = response.data.product;
                 setProduct(productData);
-                setQuantity(productData.minimum_order_quantity || 1); // Set initial quantity to minimum order quantity
+                setQuantity(productData.minimum_order_quantity || 1); 
             })
             .catch(error => {
                 console.error('Error fetching product data:', error);
             });
     }, [productId]);
 
-    // Increase quantity
     const increaseQuantity = () => {
         setQuantity(prevQuantity => prevQuantity + 1);
     };
 
-    // Decrease quantity (ensuring it doesn't go below the minimum order quantity)
     const decreaseQuantity = () => {
         setQuantity(prevQuantity => 
             prevQuantity > product.minimum_order_quantity ? prevQuantity - 1 : prevQuantity
@@ -55,20 +53,19 @@ const ProductDetail = ({ productId }) => {
                    
                     <p>In Stock: {product.in_stock ? 'Yes' : 'No'}</p>
 
-                    {/* Pricing logic */}
                     <p className="product-price">
                         {product.discount ? (
                             <>
-                                ₹{product.selling_price}{' '}
+                                ₹{product.selling_price}/{product.unit_of_measurement}{' '}
                                 {product.mrp && (
                                     <span className="old-price" style={{ textDecoration: 'line-through', color: 'gray' }}>
-                                        ₹{product.mrp}
+                                        ₹{product.mrp}/{product.unit_of_measurement}
                                     </span>
                                 )}
                             </>
                         ) : (
                             <>
-                                ₹{product.mrp}
+                                ₹{product.mrp}/{product.unit_of_measurement}
                             </>
                         )}
                     </p>
@@ -77,7 +74,7 @@ const ProductDetail = ({ productId }) => {
                     <div className="quantity-control">
                     Minimum Order Quantity: 
                     <button onClick={decreaseQuantity} className="quantity-button">-</button>
-                        <span className="quantity-display">{quantity}/{product.unit_of_measurement}</span>
+                        <span className="quantity-display">{quantity}</span>
                       
                         <button onClick={increaseQuantity} className="quantity-button">+</button>
                     </div>

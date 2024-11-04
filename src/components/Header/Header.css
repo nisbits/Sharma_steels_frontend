@@ -17,3 +17,11 @@
     padding: 10px;
     border-radius: 31px;
 }
+
+@media (max-width: 768px) {
+    .header-container h1{
+        top: 10px;
+        left: 29%;
+        font-size: 1.5rem;
+    }
+}
