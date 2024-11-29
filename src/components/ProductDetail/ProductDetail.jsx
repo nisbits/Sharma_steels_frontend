@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ProductDetail.css';
+import { useNavigate, useParams  } from 'react-router-dom';
 
-const ProductDetail = ({ productId }) => {
+const ProductDetail = () => {
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
-
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate()
+    const { productId } = useParams();
     useEffect(() => {
-        axios.get(`http://sharmasteel.in:8080/products/product-details/13`)
+        axios.get(`http://sharmasteel.in:8080/products/product-details/${productId}`)
             .then(response => {
                 const productData = response.data.product;
                 setProduct(productData);
@@ -29,7 +32,40 @@ const ProductDetail = ({ productId }) => {
     };
 
     if (!product) return <p>Loading...</p>;
-
+    const handleAddToCart = () => {
+        const userToken = localStorage.getItem('accessToken'); // Change key to 'accessToken'
+        if (!userToken) {
+            alert("Please log in to add items to your cart.");
+            navigate('/login');
+            return;
+        }
+    
+        const cartData = {
+            product_id: productId,
+            quantity: quantity,
+        };
+    
+        axios
+            .post('http://sharmasteel.in:8080/cart/add-to-cart/', cartData, {
+                headers: {
+                    Authorization: `Bearer ${userToken}`,
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                console.log('Item added to cart successfully:', response.data);
+                alert('Item added to cart successfully!');
+            })
+            .catch(error => {
+                console.error('Error adding item to cart:', error);
+                alert('Failed to add item to cart. Please try again.');
+            });
+    };
+    
+    
+    
+    
+    
     return (
         <div className='product-div'>
             <div className='product-detail-container'>
@@ -70,7 +106,6 @@ const ProductDetail = ({ productId }) => {
                         )}
                     </p>
 
-                    {/* Quantity control */}
                     <div className="quantity-control">
                     Minimum Order Quantity: 
                     <button onClick={decreaseQuantity} className="quantity-button">-</button>
@@ -80,7 +115,7 @@ const ProductDetail = ({ productId }) => {
                     </div>
 
                     <div className='add-buy-container'>
-                        <button className='add-button'>Add To Cart</button>
+                        <button className='add-button' onClick={handleAddToCart}>Add To Cart</button>
                         <button className='buy-now'>Buy Now</button>
                     </div>
                 </div>
