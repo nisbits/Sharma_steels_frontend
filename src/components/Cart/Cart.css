@@ -59,7 +59,7 @@ align-items: center;
 .quantity-control {
     display: flex;
     align-items: center;
-    
+    justify-content: center;
 }
 
 .quantity-control button {

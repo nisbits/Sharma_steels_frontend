@@ -150,8 +150,8 @@ const Cart = ({ userId }) => {
                                
                             </div>
                             <div>
-                            <h3>Product ID: {item.product_details.product_id}</h3>
-                            <p>{item.product_details.brand_name}</p>
+                            <h3>{item.product_details.brand_name}</h3>
+                            <p>{item.product_details.specification}</p>
                                 <p>Price: ₹{item.price}</p>
                                 <p>Total Price: ₹{(item.price * item.quantity).toFixed(2)}</p>
                                 
