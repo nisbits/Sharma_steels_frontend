@@ -8,6 +8,7 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate()
+    const [orderDetails, setOrderDetails] = useState(null);
     const { productId } = useParams();
     useEffect(() => {
         axios.get(`http://sharmasteel.in:8080/products/product-details/${productId}`)
@@ -32,6 +33,9 @@ const ProductDetail = () => {
     };
 
     if (!product) return <p>Loading...</p>;
+
+
+
     const handleAddToCart = () => {
         const userToken = localStorage.getItem('accessToken'); // Change key to 'accessToken'
         if (!userToken) {
@@ -63,7 +67,41 @@ const ProductDetail = () => {
     };
     
     
+    const handleBuyNow = () => {
+        const userToken = localStorage.getItem("accessToken");
     
+        if (!userToken) {
+          alert("Please log in to proceed with your purchase.");
+          navigate("/login");
+          return;
+        }
+    
+        // Payload for Buy Now API
+        const requestData = {
+          product_id: productId,
+          quantity: quantity,
+        };
+    
+        axios
+          .post("http://sharmasteel.in:8080/cart/buy-now/", requestData, {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+              "Content-Type": "application/json",
+            },
+          })
+          .then((response) => {
+            console.log("Buy Now successful:", response.data);
+            // Store order details in state or pass as route state
+            setOrderDetails(response.data);
+    
+            // Navigate to Order Summary Page with data
+            navigate("/order-summary", { state: { orderData: response.data } });
+          })
+          .catch((error) => {
+            console.error("Error during Buy Now:", error);
+            alert("Failed to process your purchase. Please try again.");
+          });
+      };
     
     
     return (
@@ -74,12 +112,14 @@ const ProductDetail = () => {
                         src={`http://sharmasteel.in:8080${product.product_image_main}`} 
                         alt="Main Product" 
                     />
+                    
                     {product.additional_images.map((img, index) => (
                         <img 
                             key={index} 
                             src={`http://sharmasteel.in:8080${img.image}`} 
                             alt={`Additional ${index + 1}`} 
                         />
+                        
                     ))}
                 </div>
                 
@@ -116,7 +156,7 @@ const ProductDetail = () => {
 
                     <div className='add-buy-container'>
                         <button className='add-button' onClick={handleAddToCart}>Add To Cart</button>
-                        <button className='buy-now'>Buy Now</button>
+                        <button className='buy-now' onClick={handleBuyNow}>Buy Now</button>
                     </div>
                 </div>
             </div>

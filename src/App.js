@@ -9,6 +9,7 @@ import ProductsList from './components/ProductsList/ProductsList'; // Import Pro
 import ProductCategory from './components/ProductCategory/ProductCategory'; // Import ProductCategory component
 import ProductDetail from './components/ProductDetail/ProductDetail';
 import Cart from './components/Cart/Cart';
+import OrderSummary from './components/OrderSummary/OrderSummary';
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
           <Route path="/category/:id" element={<ProductCategory />} />
           <Route path="/product_detail/:productId" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart  />} />
-          
+          <Route path="/order-summary" element={<OrderSummary/>} />
                   </Routes>
       </div>
     </Router>
