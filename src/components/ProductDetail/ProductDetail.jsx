@@ -69,19 +69,18 @@ const ProductDetail = () => {
     
     const handleBuyNow = () => {
         const userToken = localStorage.getItem("accessToken");
-    
+      
         if (!userToken) {
           alert("Please log in to proceed with your purchase.");
           navigate("/login");
           return;
         }
-    
-        // Payload for Buy Now API
+      
         const requestData = {
           product_id: productId,
           quantity: quantity,
         };
-    
+      
         axios
           .post("http://sharmasteel.in:8080/cart/buy-now/", requestData, {
             headers: {
@@ -91,17 +90,39 @@ const ProductDetail = () => {
           })
           .then((response) => {
             console.log("Buy Now successful:", response.data);
-            // Store order details in state or pass as route state
-            setOrderDetails(response.data);
-    
-            // Navigate to Order Summary Page with data
-            navigate("/order-summary", { state: { orderData: response.data } });
+      
+            const apiItem = response.data.items[0]; // Extract the first item from the API response
+            const singleOrderData = {
+              total_price: response.data.total_price,
+              items: [
+                {
+                  quantity: apiItem.quantity,
+                  base_price: apiItem.base_price, // Use base_price from API response
+                  product_details: {
+                    brand_name: apiItem.product_details.brand_name,
+                    specification: apiItem.product_details.specification,
+                    selling_price: apiItem.product_details.selling_price,
+                    mrp: apiItem.product_details.mrp,
+                    unit_of_measurement: apiItem.product_details.unit_of_measurement,
+                    product_image_main: apiItem.product_details.product_image_main,
+                    discount: apiItem.product_details.discount,
+                  },
+                  extra_charges_breakdown: apiItem.extra_charges_breakdown || [],
+                  total_price: apiItem.total_price,
+                },
+              ],
+            };
+      
+            navigate("/order-summary", { state: { orderData: singleOrderData } });
           })
           .catch((error) => {
             console.error("Error during Buy Now:", error);
             alert("Failed to process your purchase. Please try again.");
           });
       };
+      
+      
+      
     
     
     return (
@@ -119,7 +140,6 @@ const ProductDetail = () => {
                             src={`http://sharmasteel.in:8080${img.image}`} 
                             alt={`Additional ${index + 1}`} 
                         />
-                        
                     ))}
                 </div>
                 

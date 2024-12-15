@@ -1,54 +1,12 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
+import { useLocation } from "react-router-dom";
 import "./OrderSummary.css";
 
 const OrderSummary = () => {
-  const [orderData, setOrderData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const location = useLocation();
+  const { orderData } = location.state || {}; // Retrieve order data passed during navigation
 
-  useEffect(() => {
-    const fetchOrderSummary = async () => {
-      const userToken = localStorage.getItem("accessToken");
-
-      if (!userToken) {
-        alert("Please log in to view your order summary.");
-        return;
-      }
-
-      try {
-        const response = await axios.post(
-          "http://sharmasteel.in:8080/cart/create-order-summary/",
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        setOrderData(response.data);
-        console.log(response);
-      } catch (err) {
-        console.error("Error fetching order summary:", err);
-        setError("Failed to load order summary. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOrderSummary();
-  }, []);
-
-  if (loading) {
-    return <p className="loading-message">Loading order summary...</p>;
-  }
-
-  if (error) {
-    return <p className="error-message">{error}</p>;
-  }
-
-  if (!orderData || !orderData.items) {
+  if (!orderData) {
     return <p>No order details found.</p>;
   }
 
@@ -59,7 +17,7 @@ const OrderSummary = () => {
 
       {orderData.items.map((item, index) => (
         <div key={index} className="order-item">
-          {/* Product Image and Brief Info */}
+          {/* Product Image and Details */}
           <div className="product-image-container">
             <div className="image-badge-span">
               <img
@@ -68,10 +26,10 @@ const OrderSummary = () => {
                 className="product-image12"
               />
               {item.product_details.discount > 0 && (
-    <span className="discount-badge">
-      -{item.product_details.discount}%
-    </span>
-  )}
+                <span className="discount-badge">
+                  -{item.product_details.discount}%
+                </span>
+              )}
             </div>
 
             <div className="product-basic-details">
@@ -82,7 +40,7 @@ const OrderSummary = () => {
               <h3 className="product-price">
                 {item.product_details.discount ? (
                   <>
-                    ₹{item.product_details.selling_price} /
+                    ₹{item.product_details.selling_price} /{" "}
                     {item.product_details.unit_of_measurement}
                     {item.product_details.mrp && (
                       <span
@@ -92,14 +50,14 @@ const OrderSummary = () => {
                           color: "gray",
                         }}
                       >
-                        ₹{item.product_details.mrp} /
+                        ₹{item.product_details.mrp} /{" "}
                         {item.product_details.unit_of_measurement}
                       </span>
                     )}
                   </>
                 ) : (
                   <>
-                    ₹{item.product_details.mrp} /
+                    ₹{item.product_details.mrp} /{" "}
                     {item.product_details.unit_of_measurement}
                   </>
                 )}
@@ -107,7 +65,7 @@ const OrderSummary = () => {
             </div>
           </div>
 
-          {/* Product Price with Discount Logic */}
+          {/* Additional Details */}
           <div className="product-details21">
             <div className="total-div">
               <h6>
@@ -119,28 +77,26 @@ const OrderSummary = () => {
               <h6>
                 <strong>Product Price:</strong>
               </h6>
-              <p>{item.base_price}</p>
+              <p>₹{item.base_price}</p>
             </div>
 
-            {/* Extra Charges */}
             {item.extra_charges_breakdown &&
               item.extra_charges_breakdown.map((charge, idx) => (
-                <div className="total-div">
+                <div className="total-div" key={idx}>
                   <h6>
-                    {" "}
                     <strong>
-                      {charge.name}({charge.amount}/{" "}
+                      {charge.name} ({charge.amount}/
                       {item.product_details.unit_of_measurement}):
-                    </strong>{" "}
+                    </strong>
                   </h6>
-                  <p key={idx}>₹{charge.total_amount_for_quantity}</p>
+                  <p>₹{charge.total_amount_for_quantity}</p>
                 </div>
               ))}
           </div>
-          <hr className="horizontal-line"/>
+          <hr className="horizontal-line" />
           <div className="total-div">
             <h3>Total</h3>
-            <p>{item.total_price}</p>
+            <p>₹{item.total_price}</p>
           </div>
         </div>
       ))}

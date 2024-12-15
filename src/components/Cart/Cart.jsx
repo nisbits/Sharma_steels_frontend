@@ -141,6 +141,36 @@ const Cart = ({ userId }) => {
         console.error("Error deleting item from cart:", error);
       });
   };
+  const handleProceedToCheckout = () => {
+    const token = localStorage.getItem("accessToken");
+  
+    if (!token) {
+      alert("Please log in to proceed.");
+      navigate("/login");
+      return;
+    }
+  
+    axios
+      .post(
+        "http://sharmasteel.in:8080/cart/create-order-summary/",
+        {}, // If the API requires a body, include the necessary payload here
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        console.log("Proceed to Checkout successful:", response.data);
+        navigate("/order-summary", { state: { orderData: response.data } });
+      })
+      .catch((error) => {
+        console.error("Error during checkout:", error);
+        alert("Failed to proceed to checkout. Please try again.");
+      });
+  };
+  
 
   if (loading) return <p>Loading...</p>;
   const baseUrl = "http://sharmasteel.in:8080";
@@ -150,7 +180,7 @@ const Cart = ({ userId }) => {
       <div className="cart-container">
         <h2>Total Items: {totalItems}</h2>
         <h4>Subtotal: ₹{subtotal}</h4>
-        <button className="checkout-button">Proceed to Checkout</button>
+        <button className="checkout-button" onClick={handleProceedToCheckout}>Proceed to Checkout</button>
 
         {cartItems.length > 0 ? (
           <div className="cart-items">
