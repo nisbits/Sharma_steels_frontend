@@ -226,7 +226,7 @@ const Cart = ({ userId }) => {
                 </div>
                
               </div>
-               <div className="quantity-control">
+               <div className="quantity-control1">
                <button onClick={() => decreaseQuantity(item)}>-</button>
                <span>{item.quantity}</span>
                <button onClick={() => increaseQuantity(item)}>+</button>
