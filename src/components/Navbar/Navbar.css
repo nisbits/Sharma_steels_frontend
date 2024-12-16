@@ -18,6 +18,25 @@
     font-size: 16px;
     font-weight: 700;
 }
+.cart-container-icon {
+    position: relative;
+    display: inline-block;
+    padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  width: 50%;
+  }
+.custom-badge {
+    position: absolute;
+    top: -5px;
+    right: -17px;
+    background-color: rgb(122, 122, 215);
+    color: white;
+    font-size: 10px;
+    padding: 4px 6px;
+    border-radius: 50%;
+    font-weight: bold;
+  }
 .username-display img{
     width: 50px;
     height: 50px;
@@ -48,5 +67,24 @@
 @media (max-width: 768px) {
 .navbar-container {
     padding: 10px 16px;
+  }
+  .custom-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: rgb(122, 122, 215);
+    color: white;
+    font-size: 7px;
+    padding: 4px 6px;
+    border-radius: 50%;
+    font-weight: bold;
+  }
+  .cart-container-icon {
+    position: relative;
+    display: inline-block;
+    padding: 7px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    width: 50%;
   }
 }

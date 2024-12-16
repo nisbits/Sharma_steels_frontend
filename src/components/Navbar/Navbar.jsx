@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
 import logoImage from '../../Assets/images/logo.jpeg';
 import './Navbar.css';
 import profileImage from '../../Assets/images/profile.jpg';
@@ -9,6 +10,7 @@ import { Badge } from 'rsuite';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [totalQuantity, setTotalQuantity] = useState(0);
   const token = localStorage.getItem('accessToken');
 
   let username = null;
@@ -19,17 +21,42 @@ const Navbar = () => {
       const currentTime = Math.floor(Date.now() / 1000);
       
       if (decodedToken.exp && decodedToken.exp > currentTime) {
-        username = decodedToken.user_id || decodedToken.sub; // Decodes and sets the username
+        username = decodedToken.user_id || decodedToken.sub; 
       } else {
         console.warn('Token has expired');
-        localStorage.removeItem('accessToken'); // Clear expired token
+        localStorage.removeItem('accessToken');
         navigate('/login');
       }
     } catch (error) {
       console.error('Invalid token:', error);
-      localStorage.removeItem('accessToken'); // Clear invalid token
+      localStorage.removeItem('accessToken'); 
     }
   }
+  
+  useEffect(() => {
+    const fetchCartQuantity = async () => {
+      if (!token) return;
+  
+      try {
+        const response = await axios.get(`http://sharmasteel.in:8080/cart/items/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        const items = response.data.cart_items || [];
+        const total = items.reduce((acc, item) => acc + item.quantity, 0);
+        setTotalQuantity(total); // State update
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    };
+  
+    fetchCartQuantity();
+  }, [token]);
+  
+  useEffect(() => {
+    console.log("Updated Total Quantity in state:", totalQuantity);
+  }, [totalQuantity]);
+  
 
   const handleLogin = () => {
     navigate('/login');
@@ -65,7 +92,15 @@ const Navbar = () => {
               {username}
             </span>
             <button onClick={handleLogout}>Logout</button>
-            <IoCartOutline onClick={handleCart} className='cart-icon' /> <Badge color="blue" content="99+" ></Badge>
+            <div className="cart-container-icon">
+              <IoCartOutline onClick={handleCart} className='cart-icon' />
+              {/* {totalQuantity > 0 && (
+                <Badge color="blue" content={totalQuantity} className='custom-badge' />
+              )} */}
+               {totalQuantity > 0 && (
+                <span className="custom-badge">{totalQuantity}</span>
+              )}
+            </div>
           </>
         ) : (
           <>
@@ -79,6 +114,7 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 
 
 

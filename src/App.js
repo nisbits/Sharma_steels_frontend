@@ -10,6 +10,7 @@ import ProductCategory from './components/ProductCategory/ProductCategory'; // I
 import ProductDetail from './components/ProductDetail/ProductDetail';
 import Cart from './components/Cart/Cart';
 import OrderSummary from './components/OrderSummary/OrderSummary';
+import AddAddress from './components/AddAddress/AddAddress';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/product_detail/:productId" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart  />} />
           <Route path="/order-summary" element={<OrderSummary/>} />
+          <Route path="/add-address" element={<AddAddress/>} />
                   </Routes>
       </div>
     </Router>

@@ -57,15 +57,19 @@ const Cart = ({ userId }) => {
       })
       .then((response) => {
         setSubtotal(response.data.subtotal.toFixed(2));
+      
       })
       .catch((error) => {
         console.error("Error fetching subtotal:", error);
       });
+    
   };
 
   const updateQuantity = (cartItemId, newQuantity) => {
     const token = localStorage.getItem("accessToken");
-
+  
+    console.log("Payload being sent:", { cart_item_id: cartItemId, quantity: newQuantity });
+  
     axios
       .post(
         `http://sharmasteel.in:8080/cart/update-quantity/`,
@@ -81,7 +85,9 @@ const Cart = ({ userId }) => {
         }
       )
       .then((response) => {
+        console.log("API Response:", response.data);
         const updatedItem = response.data;
+  
         setCartItems((prevItems) => {
           const newItems = prevItems.map((item) =>
             item.id === cartItemId
@@ -99,18 +105,33 @@ const Cart = ({ userId }) => {
       })
       .catch((error) => {
         console.error("Error updating quantity:", error);
+        if (error.response) {
+          console.error("Response data:", error.response.data);
+          console.error("Response status:", error.response.status);
+        }
       });
   };
+  
 
   const increaseQuantity = (item) => {
     const newQuantity = item.quantity + 1;
     updateQuantity(item.id, newQuantity);
   };
-
   const decreaseQuantity = (item) => {
-    const newQuantity = item.quantity > 1 ? item.quantity - 1 : 1;
+
+    const minOrderQuantity = item.product_details.minimum_order_quantity || 1;
+
+    if (item.quantity <= minOrderQuantity) {
+      console.log("Quantity is already at the minimum. API not called.");
+      return;
+    }
+    const newQuantity = item.quantity - 1;
     updateQuantity(item.id, newQuantity);
   };
+  
+  
+
+
 
   const handleRemoveItem = (cartItemId) => {
     deleteCartItem(cartItemId);
@@ -153,7 +174,7 @@ const Cart = ({ userId }) => {
     axios
       .post(
         "http://sharmasteel.in:8080/cart/create-order-summary/",
-        {}, // If the API requires a body, include the necessary payload here
+        {}, 
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -229,7 +250,7 @@ const Cart = ({ userId }) => {
                     )}
                   </p>
 
-                  {/* Total Price */}
+              
                   <p className="product-total-price">
                     Total Price:{" "}
                     {item.product_details.discount > 0 ? (

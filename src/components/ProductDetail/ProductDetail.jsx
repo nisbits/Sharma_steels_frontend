@@ -37,7 +37,7 @@ const ProductDetail = () => {
 
 
     const handleAddToCart = () => {
-        const userToken = localStorage.getItem('accessToken'); // Change key to 'accessToken'
+        const userToken = localStorage.getItem('accessToken'); 
         if (!userToken) {
             alert("Please log in to add items to your cart.");
             navigate('/login');
@@ -47,6 +47,7 @@ const ProductDetail = () => {
         const cartData = {
             product_id: productId,
             quantity: quantity,
+            minimum_order_quantity: product.minimum_order_quantity,
         };
     
         axios
@@ -91,13 +92,13 @@ const ProductDetail = () => {
           .then((response) => {
             console.log("Buy Now successful:", response.data);
       
-            const apiItem = response.data.items[0]; // Extract the first item from the API response
+            const apiItem = response.data.items[0];
             const singleOrderData = {
               total_price: response.data.total_price,
               items: [
                 {
                   quantity: apiItem.quantity,
-                  base_price: apiItem.base_price, // Use base_price from API response
+                  base_price: apiItem.base_price,
                   product_details: {
                     brand_name: apiItem.product_details.brand_name,
                     specification: apiItem.product_details.specification,

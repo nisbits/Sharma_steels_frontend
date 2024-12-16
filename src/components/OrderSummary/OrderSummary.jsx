@@ -1,14 +1,38 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./OrderSummary.css";
 
 const OrderSummary = () => {
   const location = useLocation();
-  const { orderData } = location.state || {}; // Retrieve order data passed during navigation
-
+  const { orderData } = location.state || {}; 
+  const navigate = useNavigate();
   if (!orderData) {
     return <p>No order details found.</p>;
   }
+
+  const handleAddAddress = async () => {
+    const token = localStorage.getItem("accessToken");
+
+    try {
+      const response = await axios.get("http://sharmasteel.in:8080/user-accounts/addresses", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("Fetched Addresses:", response.data);
+
+      // Navigate to AddAddress page with orderData and fetched addresses
+      navigate("/add-address", { state: { orderData, addresses: response.data } });
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+      alert("Failed to fetch addresses. Please try again.");
+    }
+  };
+
+
 
   return (
     <div className="order-summary-page">
@@ -101,7 +125,7 @@ const OrderSummary = () => {
         </div>
       ))}
 
-      <button className="add-address-button">Add Address</button>
+      <button className="add-address-button"  onClick={handleAddAddress}>Add Address</button>
     </div>
   );
 };
