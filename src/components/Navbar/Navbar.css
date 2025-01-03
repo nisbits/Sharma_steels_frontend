@@ -4,6 +4,9 @@
     align-items: center;
     padding: 10px 120px;
     border-bottom: 1px solid rgb(183, 183, 183);
+    /* position: fixed;
+    top: 0px;
+    width: 100%; */
 }
 
 .username-display{
@@ -24,7 +27,7 @@
     padding: 10px;
   background-color: #f8f8f8;
   border-radius: 8px;
-  width: 50%;
+  width: 11%;
   }
 .custom-badge {
     position: absolute;
@@ -42,6 +45,17 @@
     height: 50px;
     border-radius: 50%;
 
+}
+
+.address-section{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  gap: 5px;
+}
+.address-section p{
+  margin: 0px;
 }
 .logo img{
     width: 75px;

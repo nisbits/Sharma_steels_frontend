@@ -9,6 +9,9 @@ const Cart = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
   const [subtotal, setSubtotal] = useState(0);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [showAddressModal, setShowAddressModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -162,34 +165,65 @@ const Cart = ({ userId }) => {
         console.error("Error deleting item from cart:", error);
       });
   };
-  const handleProceedToCheckout = () => {
+
+  const fetchAddresses = async () => {
     const token = localStorage.getItem("accessToken");
-  
     if (!token) {
       alert("Please log in to proceed.");
       navigate("/login");
       return;
     }
-  
-    axios
-      .post(
-        "http://sharmasteel.in:8080/cart/create-order-summary/",
-        {}, 
+
+    try {
+      const response = await axios.get(
+        "http://sharmasteel.in:8080/user-accounts/addresses/",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
-      )
-      .then((response) => {
-        console.log("Proceed to Checkout successful:", response.data);
-        navigate("/order-summary", { state: { orderData: response.data } });
-      })
-      .catch((error) => {
-        console.error("Error during checkout:", error);
-        alert("Failed to proceed to checkout. Please try again.");
+      );
+      setAddresses(response.data.user_Addresses || []);
+      setShowAddressModal(true);
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+      alert("Failed to fetch addresses.");
+    }
+  };
+  const proceedWithSelectedAddress = () => {
+  if (!selectedAddress) {
+    alert("Please select a delivery address.");
+    return;
+  }
+
+  const token = localStorage.getItem("accessToken");
+
+  axios
+    .post(
+      "http://sharmasteel.in:8080/cart/create-order-summary/",
+      { address_id: selectedAddress.id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((response) => {
+      navigate("/order-summary", {
+        state: { 
+          orderData: response.data, 
+          address: selectedAddress // Include the full selected address here
+        },
       });
+      setShowAddressModal(false);
+    })
+    .catch((error) => {
+      console.error("Error during checkout:", error);
+      alert("Failed to proceed to checkout. Please try again.");
+    });
+};
+
+  const handleProceedToCheckout = () => {
+    fetchAddresses();
   };
   
 
@@ -202,6 +236,30 @@ const Cart = ({ userId }) => {
         <h2>Total Items: {totalItems}</h2>
         <h4>Subtotal: ₹{subtotal}</h4>
         <button className="checkout-button" onClick={handleProceedToCheckout}>Proceed to Checkout</button>
+        {showAddressModal && (
+          <div className="address-modal">
+            <div className="modal-content">
+              <h3>Select Delivery Address</h3>
+              <ul>
+                {addresses.map((address) => (
+                  <li key={address.id}>
+                    <label>
+                      <input
+                        type="radio"
+                        name="address"
+                        value={address.id}
+                        onChange={() => setSelectedAddress(address)}
+                      />
+                      {`${address.city}, ${address.state}, ${address.country} - ${address.zip_code}`}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+              <button onClick={proceedWithSelectedAddress}>Proceed</button>
+              <button onClick={() => setShowAddressModal(false)}>Cancel</button>
+            </div>
+          </div>
+        )}
 
         {cartItems.length > 0 ? (
           <div className="cart-items">
@@ -285,6 +343,7 @@ const Cart = ({ userId }) => {
              </div>
             ))}
           </div>
+          
         ) : (
           <p>Your cart is empty.</p>
         )}

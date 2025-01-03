@@ -1,38 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./OrderSummary.css";
 
 const OrderSummary = () => {
   const location = useLocation();
-  const { orderData } = location.state || {}; 
+  const { orderData, address } = location.state || {}; // address may include only address_id
   const navigate = useNavigate();
+  const [addressDetails, setAddressDetails] = useState(address || null); // Initialize with passed address or null
+
+  useEffect(() => {
+    if (orderData && orderData.address_id && !addressDetails) {
+      fetchAddressById(orderData.address_id); // Fetch address details using address_id
+    }
+  }, [orderData, addressDetails]);
+  
+  const fetchAddressById = async (addressId) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(
+        "http://sharmasteel.in:8080/user-accounts/addresses/",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      const allAddresses = response.data.user_Addresses || [];
+      const matchingAddress = allAddresses.find((addr) => addr.id === addressId);
+      if (matchingAddress) {
+        setAddressDetails(matchingAddress);
+      } else {
+        console.error("Matching address not found for address_id:", addressId);
+      }
+    } catch (error) {
+      console.error("Error fetching address by ID:", error);
+    }
+  };
+  
+
   if (!orderData) {
     return <p>No order details found.</p>;
   }
-
-  const handleAddAddress = async () => {
-    const token = localStorage.getItem("accessToken");
-
-    try {
-      const response = await axios.get("http://sharmasteel.in:8080/user-accounts/addresses", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      console.log("Fetched Addresses:", response.data);
-
-      // Navigate to AddAddress page with orderData and fetched addresses
-      navigate("/add-address", { state: { orderData, addresses: response.data } });
-    } catch (error) {
-      console.error("Error fetching addresses:", error);
-      alert("Failed to fetch addresses. Please try again.");
-    }
-  };
-
-
 
   return (
     <div className="order-summary-page">
@@ -41,7 +49,6 @@ const OrderSummary = () => {
 
       {orderData.items.map((item, index) => (
         <div key={index} className="order-item">
-          {/* Product Image and Details */}
           <div className="product-image-container">
             <div className="image-badge-span">
               <img
@@ -89,7 +96,6 @@ const OrderSummary = () => {
             </div>
           </div>
 
-          {/* Additional Details */}
           <div className="product-details21">
             <div className="total-div">
               <h6>
@@ -125,7 +131,20 @@ const OrderSummary = () => {
         </div>
       ))}
 
-      <button className="add-address-button"  onClick={handleAddAddress}>Add Address</button>
+{addressDetails ? (
+  <div className="delivery-address">
+    <h3>Delivery Address</h3>
+    <p>
+      {addressDetails.city}, {addressDetails.state},{" "}
+      {addressDetails.country} - {addressDetails.zip_code}
+    </p>
+  </div>
+) : (
+  <p>Loading delivery address...</p>
+)}
+
+
+      <button className="add-address-button">Make Payment</button>
     </div>
   );
 };

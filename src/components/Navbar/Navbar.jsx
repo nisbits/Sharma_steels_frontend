@@ -1,109 +1,162 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import axios from 'axios';
-import logoImage from '../../Assets/images/logo.jpeg';
-import './Navbar.css';
-import profileImage from '../../Assets/images/profile.jpg';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
+import logoImage from "../../Assets/images/logo.jpeg";
+import "./Navbar.css";
+import profileImage from "../../Assets/images/profile.jpg";
 import { IoCartOutline } from "react-icons/io5";
-import { Badge } from 'rsuite';
+import { FaLocationDot } from "react-icons/fa6";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [totalQuantity, setTotalQuantity] = useState(0);
-  const token = localStorage.getItem('accessToken');
+  const [addresses, setAddresses] = useState([]); // To store addresses
+  const [loading, setLoading] = useState(true); // To track loading state
+  const token = localStorage.getItem("accessToken");
 
   let username = null;
 
   if (token) {
     try {
-      const decodedToken = jwtDecode(token);
+      const decodedToken = jwtDecode(token); // Use jwtDecode here
       const currentTime = Math.floor(Date.now() / 1000);
-      
+
       if (decodedToken.exp && decodedToken.exp > currentTime) {
-        username = decodedToken.user_id || decodedToken.sub; 
+        username = decodedToken.user_id || decodedToken.sub;
       } else {
-        console.warn('Token has expired');
-        localStorage.removeItem('accessToken');
-        navigate('/login');
+        console.warn("Token has expired");
+        localStorage.removeItem("accessToken");
+        navigate("/login");
       }
     } catch (error) {
-      console.error('Invalid token:', error);
-      localStorage.removeItem('accessToken'); 
+      console.error("Invalid token:", error);
+      localStorage.removeItem("accessToken");
     }
   }
-  
+
   useEffect(() => {
     const fetchCartQuantity = async () => {
       if (!token) return;
-  
+
       try {
-        const response = await axios.get(`http://sharmasteel.in:8080/cart/items/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-  
+        const response = await axios.get(
+          `http://sharmasteel.in:8080/cart/items/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
         const items = response.data.cart_items || [];
         const total = items.reduce((acc, item) => acc + item.quantity, 0);
-        setTotalQuantity(total); // State update
+        setTotalQuantity(total);
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
     };
-  
+
     fetchCartQuantity();
   }, [token]);
-  
+
   useEffect(() => {
-    console.log("Updated Total Quantity in state:", totalQuantity);
-  }, [totalQuantity]);
+    const fetchAddresses = async () => {
+      if (!token) {
+        setAddresses([{ id: 0, full_address: "Test Address, Demo City" }]);
+        setLoading(false);
+        return;
+      }
+  
+      try {
+        console.log("Fetching addresses with token:", token); // Log token
+        const response = await axios.get(
+          "http://sharmasteel.in:8080/user-accounts/addresses/",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+  
+        console.log("API Response:", response.data); // Log API response
+  
+        if (response.data.user_Addresses) {
+          setAddresses(response.data.user_Addresses);
+        } else {
+          setAddresses([{ id: 0, full_address: "No address found" }]);
+        }
+      } catch (err) {
+        console.error("Error fetching addresses:", err);
+        setAddresses([{ id: 0, full_address: "Failed to load addresses" }]);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchAddresses();
+  }, [token]);
   
 
   const handleLogin = () => {
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleRegister = () => {
-    navigate('/register');
+    navigate("/register");
   };
 
   const handleLogo = () => {
-    navigate('/');
+    navigate("/");
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken'); // Clear the token from localStorage
-    navigate('/'); // Redirect to home after logout
+    localStorage.removeItem("accessToken");
+    navigate("/");
   };
 
   const handleCart = () => {
-    navigate('/cart');
+    navigate("/cart");
   };
 
   return (
-    <div className='navbar-container'>
-      <div className='logo'>
-        <img src={logoImage} alt='Logo' onClick={handleLogo} />
+    <div className="navbar-container">
+      <div className="logo">
+        <img src={logoImage} alt="Logo" onClick={handleLogo} />
       </div>
-      <div className='nav-buttons'>
+      <div className="nav-buttons">
         {username ? (
           <>
-            <span className='username-display'>
-              <img src={profileImage} alt='Profile' />
+            
+            <div className="address-section">
+            <FaLocationDot  style={{marginTop:'7px'}}/>
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <div>
+                  {addresses.map((address) => (
+                    <>
+                    <span key={address.id}>{address.city}, {address.state} {address.country}-{address.zip_code}</span>
+                    <p>Update Address</p>
+                  </>
+                  ))}
+                </div>
+              )}
+            </div>
+            <span className="username-display">
+              <img src={profileImage} alt="Profile" />
               {username}
             </span>
             <button onClick={handleLogout}>Logout</button>
             <div className="cart-container-icon">
-              <IoCartOutline onClick={handleCart} className='cart-icon' />
-              {/* {totalQuantity > 0 && (
-                <Badge color="blue" content={totalQuantity} className='custom-badge' />
-              )} */}
-               {totalQuantity > 0 && (
+              <IoCartOutline onClick={handleCart} className="cart-icon" />
+              {totalQuantity > 0 && (
                 <span className="custom-badge">{totalQuantity}</span>
               )}
             </div>
           </>
         ) : (
           <>
+            <div className="address-section">
+            <FaLocationDot style={{marginTop:'7px'}}/>
+              <p>Test Address, Demo City</p>
+            </div>
             <button onClick={handleLogin}>Login</button>
             <button onClick={handleRegister}>Register</button>
           </>
@@ -114,6 +167,130 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
+
+
+// import React, { useEffect, useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { jwtDecode } from 'jwt-decode';
+// import axios from 'axios';
+// import logoImage from '../../Assets/images/logo.jpeg';
+// import './Navbar.css';
+// import profileImage from '../../Assets/images/profile.jpg';
+// import { IoCartOutline } from "react-icons/io5";
+// import { Badge } from 'rsuite';
+
+// const Navbar = () => {
+//   const navigate = useNavigate();
+//   const [totalQuantity, setTotalQuantity] = useState(0);
+//   const token = localStorage.getItem('accessToken');
+
+//   let username = null;
+
+//   if (token) {
+//     try {
+//       const decodedToken = jwtDecode(token);
+//       const currentTime = Math.floor(Date.now() / 1000);
+      
+//       if (decodedToken.exp && decodedToken.exp > currentTime) {
+//         username = decodedToken.user_id || decodedToken.sub; 
+//       } else {
+//         console.warn('Token has expired');
+//         localStorage.removeItem('accessToken');
+//         navigate('/login');
+//       }
+//     } catch (error) {
+//       console.error('Invalid token:', error);
+//       localStorage.removeItem('accessToken'); 
+//     }
+//   }
+  
+//   useEffect(() => {
+//     const fetchCartQuantity = async () => {
+//       if (!token) return;
+  
+//       try {
+//         const response = await axios.get(`http://sharmasteel.in:8080/cart/items/`, {
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+  
+//         const items = response.data.cart_items || [];
+//         const total = items.reduce((acc, item) => acc + item.quantity, 0);
+//         setTotalQuantity(total); 
+//       } catch (error) {
+//         console.error("Error fetching cart items:", error);
+//       }
+//     };
+  
+//     fetchCartQuantity();
+//   }, [token]);
+  
+//   useEffect(() => {
+//     console.log("Updated Total Quantity in state:", totalQuantity);
+//   }, [totalQuantity]);
+  
+
+//   const handleLogin = () => {
+//     navigate('/login');
+//   };
+
+//   const handleRegister = () => {
+//     navigate('/register');
+//   };
+
+//   const handleLogo = () => {
+//     navigate('/');
+//   };
+
+//   const handleLogout = () => {
+//     localStorage.removeItem('accessToken'); 
+//     navigate('/');
+//   };
+
+//   const handleCart = () => {
+//     navigate('/cart');
+//   };
+
+//   return (
+//     <div className='navbar-container'>
+//       <div className='logo'>
+//         <img src={logoImage} alt='Logo' onClick={handleLogo} />
+//       </div>
+//       <div className='nav-buttons'>
+//         {username ? (
+//           <>
+//             <span className='username-display'>
+//               <img src={profileImage} alt='Profile' />
+//               {username}
+//             </span>
+//             <button onClick={handleLogout}>Logout</button>
+//             <div className="cart-container-icon">
+//               <IoCartOutline onClick={handleCart} className='cart-icon' />
+//               {/* {totalQuantity > 0 && (
+//                 <Badge color="blue" content={totalQuantity} className='custom-badge' />
+//               )} */}
+//                {totalQuantity > 0 && (
+//                 <span className="custom-badge">{totalQuantity}</span>
+//               )}
+//             </div>
+//           </>
+//         ) : (
+//           <>
+//           <div>
+//             <p>Address</p>
+//             <button>Update Address</button>
+//           </div>
+//             <button onClick={handleLogin}>Login</button>
+//             <button onClick={handleRegister}>Register</button>
+//           </>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Navbar;
 
 
 
