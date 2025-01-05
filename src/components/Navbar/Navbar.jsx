@@ -65,7 +65,7 @@ const Navbar = () => {
         setLoading(false);
         return;
       }
-  
+
       try {
         console.log("Fetching addresses with token:", token); // Log token
         const response = await axios.get(
@@ -74,9 +74,9 @@ const Navbar = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-  
+
         console.log("API Response:", response.data); // Log API response
-  
+
         if (response.data.user_Addresses) {
           setAddresses(response.data.user_Addresses);
         } else {
@@ -89,10 +89,9 @@ const Navbar = () => {
         setLoading(false);
       }
     };
-  
+
     fetchAddresses();
   }, [token]);
-  
 
   const handleLogin = () => {
     navigate("/login");
@@ -123,42 +122,49 @@ const Navbar = () => {
       <div className="nav-buttons">
         {username ? (
           <>
-            
             <div className="address-section">
-            <FaLocationDot  style={{marginTop:'7px'}}/>
+              <FaLocationDot style={{ marginTop: "7px" }} />
               {loading ? (
                 <p>Loading...</p>
               ) : (
                 <div>
-                  {addresses.map((address) => (
+                  {addresses.length > 0 && (
                     <>
-                    <span key={address.id}>{address.city}, {address.state} {address.country}-{address.zip_code}</span>
-                    <p>Update Address</p>
-                  </>
-                  ))}
+                      <span key={addresses[0].id}>
+                        {addresses[0].city}, {addresses[0].state}{" "}
+                        {addresses[0].country}-{addresses[0].zip_code}
+                      </span>
+                      <p>Update Address</p>
+                    </>
+                  )}
                 </div>
               )}
             </div>
-            <span className="username-display">
-              <img src={profileImage} alt="Profile" />
-              {username}
-            </span>
-            <button onClick={handleLogout}>Logout</button>
-            <div className="cart-container-icon">
-              <IoCartOutline onClick={handleCart} className="cart-icon" />
-              {totalQuantity > 0 && (
-                <span className="custom-badge">{totalQuantity}</span>
-              )}
+            <div className="all-details">
+              <span className="username-display">
+                <img src={profileImage} alt="Profile" />
+                {username}
+              </span>
+              <button onClick={handleLogout}>Logout</button>
+              <div className="cart-container-icon">
+                <IoCartOutline onClick={handleCart} className="cart-icon" />
+                {totalQuantity > 0 && (
+                  <span className="custom-badge">{totalQuantity}</span>
+                )}
+              </div>
             </div>
           </>
         ) : (
           <>
             <div className="address-section">
-            <FaLocationDot style={{marginTop:'7px'}}/>
+              <FaLocationDot style={{ marginTop: "7px" }} />
               <p>Test Address, Demo City</p>
             </div>
+            <div className="login-register-btn">
             <button onClick={handleLogin}>Login</button>
             <button onClick={handleRegister}>Register</button>
+            </div>
+
           </>
         )}
       </div>
@@ -167,9 +173,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
-
 
 // import React, { useEffect, useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
@@ -192,9 +195,9 @@ export default Navbar;
 //     try {
 //       const decodedToken = jwtDecode(token);
 //       const currentTime = Math.floor(Date.now() / 1000);
-      
+
 //       if (decodedToken.exp && decodedToken.exp > currentTime) {
-//         username = decodedToken.user_id || decodedToken.sub; 
+//         username = decodedToken.user_id || decodedToken.sub;
 //       } else {
 //         console.warn('Token has expired');
 //         localStorage.removeItem('accessToken');
@@ -202,34 +205,33 @@ export default Navbar;
 //       }
 //     } catch (error) {
 //       console.error('Invalid token:', error);
-//       localStorage.removeItem('accessToken'); 
+//       localStorage.removeItem('accessToken');
 //     }
 //   }
-  
+
 //   useEffect(() => {
 //     const fetchCartQuantity = async () => {
 //       if (!token) return;
-  
+
 //       try {
 //         const response = await axios.get(`http://sharmasteel.in:8080/cart/items/`, {
 //           headers: { Authorization: `Bearer ${token}` },
 //         });
-  
+
 //         const items = response.data.cart_items || [];
 //         const total = items.reduce((acc, item) => acc + item.quantity, 0);
-//         setTotalQuantity(total); 
+//         setTotalQuantity(total);
 //       } catch (error) {
 //         console.error("Error fetching cart items:", error);
 //       }
 //     };
-  
+
 //     fetchCartQuantity();
 //   }, [token]);
-  
+
 //   useEffect(() => {
 //     console.log("Updated Total Quantity in state:", totalQuantity);
 //   }, [totalQuantity]);
-  
 
 //   const handleLogin = () => {
 //     navigate('/login');
@@ -244,7 +246,7 @@ export default Navbar;
 //   };
 
 //   const handleLogout = () => {
-//     localStorage.removeItem('accessToken'); 
+//     localStorage.removeItem('accessToken');
 //     navigate('/');
 //   };
 
@@ -291,13 +293,6 @@ export default Navbar;
 // };
 
 // export default Navbar;
-
-
-
-
-
-
-
 
 // import React from 'react';
 // import { useNavigate } from 'react-router-dom';

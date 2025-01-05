@@ -9,6 +9,15 @@ const ProductDetail = () => {
   const [addresses, setAddresses] = useState([]); 
   const [selectedAddress, setSelectedAddress] = useState(null); 
   const [showAddressModal, setShowAddressModal] = useState(false); 
+  const [showAddAddressForm, setShowAddAddressForm] = useState(false);
+  const [newAddress, setNewAddress] = useState({
+    receiver_name: "",
+    receiver_phone_number: "",
+    address_line_1: "",
+    city: "",
+    state: "",
+    zip_code: "",
+  });
   const navigate = useNavigate();
   const { productId } = useParams();
 
@@ -26,27 +35,36 @@ const ProductDetail = () => {
   }, [productId]);
 
   const fetchAddresses = async () => {
-    const userToken = localStorage.getItem('accessToken');
+    const userToken = localStorage.getItem("accessToken");
     if (!userToken) {
-      alert('Please log in to view addresses.');
-      navigate('/login');
+      alert("Please log in to view addresses.");
+      navigate("/login");
       return;
     }
-
+  
     try {
       const response = await axios.get(
-        'http://sharmasteel.in:8080/user-accounts/addresses/',
+        "http://sharmasteel.in:8080/user-accounts/addresses/",
         {
           headers: { Authorization: `Bearer ${userToken}` },
         }
       );
-      setAddresses(response.data.user_Addresses || []);
+  
+      const fetchedAddresses = response.data.user_Addresses || [];
+      setAddresses(fetchedAddresses);
+  
+      // Set the first address as the default selected address if available
+      if (fetchedAddresses.length > 0) {
+        setSelectedAddress(fetchedAddresses[0]);
+      }
+  
       setShowAddressModal(true);
     } catch (error) {
-      console.error('Error fetching addresses:', error);
-      alert('Failed to fetch addresses.');
+      console.error("Error fetching addresses:", error);
+      alert("Failed to fetch addresses.");
     }
   };
+  
 
   const handleAddToCart = () => {
     const userToken = localStorage.getItem('accessToken');
@@ -131,6 +149,43 @@ const ProductDetail = () => {
         : prevQuantity
     );
   };
+  const handleAddNewAddress = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("accessToken");
+  
+    try {
+      await axios.post(
+        "http://sharmasteel.in:8080/user-accounts/addresses/",
+        newAddress,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      const response = await axios.get(
+        "http://sharmasteel.in:8080/user-accounts/addresses/",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      const updatedAddresses = response.data.user_Addresses || [];
+      setAddresses(updatedAddresses);
+  
+      // Automatically select the newly added address
+      setSelectedAddress(updatedAddresses[updatedAddresses.length - 1]);
+  
+      setShowAddAddressForm(false);
+      alert("Address added successfully!");
+    } catch (err) {
+      console.error("Error adding new address:", err);
+      alert("Failed to add new address. Please try again.");
+    }
+  };
+  
 
   if (!product) return <p>Loading...</p>;
 
@@ -196,34 +251,161 @@ const ProductDetail = () => {
 
       {/* Address Modal */}
       {showAddressModal && (
-        <div className='address-modal'>
-          <div className='modal-content'>
-            <h3>Select Delivery Address</h3>
-            <ul>
-              {addresses.map((address) => (
-                <li key={address.id}>
-                  <label>
-                    <input
-                      type='checkbox'
-                      name='address'
-                      value={address.id}
-                      onChange={() => setSelectedAddress(address)}
-                    />
-                    
-                    {address.city} {"  "}
-                    {address.state}, {"  "}
-                    {address.country}{"  "}
-                    -{"  "}
-                    {address.zip_code}
-                  </label>
-                </li>
-              ))}
-            </ul>
-            <button onClick={proceedWithSelectedAddress}>Proceed</button>
-            <button onClick={() => setShowAddressModal(false)}>Cancel</button>
-          </div>
-        </div>
-      )}
+  <div className='address-modal'>
+    <div className='modal-content'>
+      <h3>Select Delivery Address</h3>
+      <ul>
+        {addresses.map((address) => (
+          <li key={address.id}>
+            <label>
+              <input
+                type='radio'
+                name='address'
+                value={address.id}
+                checked={selectedAddress?.id === address.id}
+                onChange={() => setSelectedAddress(address)}
+              />
+              {address.city}, {address.state}, {address.country} -{" "}
+              {address.zip_code}
+            </label>
+          </li>
+        ))}
+      </ul>
+      <button onClick={proceedWithSelectedAddress}>Proceed</button>
+      <button onClick={() => setShowAddressModal(false)}>Cancel</button>
+      <button onClick={() => setShowAddAddressForm(true)}>Add New Address</button>
+    </div>
+  </div>
+)}
+
+{/* Add New Address Modal */}
+{showAddAddressForm && (
+  <div className='modal-overlay'>
+    <div className='modal-content'>
+      <h2>Add New Address</h2>
+      <form onSubmit={handleAddNewAddress} className='addressmodal-div12'>
+        <input
+          type='text'
+          name='receiver_name'
+          placeholder='Receiver Name'
+          value={newAddress.receiver_name}
+          onChange={(e) => setNewAddress({ ...newAddress, receiver_name: e.target.value })}
+          required
+        />
+        <input
+          type='text'
+          name='receiver_phone_number'
+          placeholder='Phone Number'
+          value={newAddress.receiver_phone_number}
+          onChange={(e) =>
+            setNewAddress({ ...newAddress, receiver_phone_number: e.target.value })
+          }
+          required
+        />
+        <input
+          type='text'
+          name='address_line_1'
+          placeholder='Address'
+          value={newAddress.address_line_1}
+          onChange={(e) => setNewAddress({ ...newAddress, address_line_1: e.target.value })}
+          required
+        />
+        <input
+          type='text'
+          name='city'
+          placeholder='City'
+          value={newAddress.city}
+          onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
+          required
+        />
+        <input
+          type='text'
+          name='state'
+          placeholder='State'
+          value={newAddress.state}
+          onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
+          required
+        />
+        <input
+          type='text'
+          name='zip_code'
+          placeholder='Zip Code'
+          value={newAddress.zip_code}
+          onChange={(e) => setNewAddress({ ...newAddress, zip_code: e.target.value })}
+          required
+        />
+        <button type='submit'>Submit</button>
+        <button type='button' onClick={() => setShowAddAddressForm(false)}>
+          Cancel
+        </button>
+      </form>
+    </div>
+  </div>
+)}
+
+      {showAddAddressForm && (
+  <div className='modal-overlay'>
+    <div className='modal-content'>
+      <h2>Add New Address</h2>
+      <form onSubmit={handleAddNewAddress}>
+        <input
+          type='text'
+          name='receiver_name'
+          placeholder='Receiver Name'
+          value={newAddress.receiver_name}
+          onChange={(e) => setNewAddress({ ...newAddress, receiver_name: e.target.value })}
+          required
+        />
+        <input
+          type='text'
+          name='receiver_phone_number'
+          placeholder='Phone Number'
+          value={newAddress.receiver_phone_number}
+          onChange={(e) =>
+            setNewAddress({ ...newAddress, receiver_phone_number: e.target.value })
+          }
+          required
+        />
+        <input
+          type='text'
+          name='address_line_1'
+          placeholder='Address'
+          value={newAddress.address_line_1}
+          onChange={(e) => setNewAddress({ ...newAddress, address_line_1: e.target.value })}
+          required
+        />
+        <input
+          type='text'
+          name='city'
+          placeholder='City'
+          value={newAddress.city}
+          onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
+          required
+        />
+        <input
+          type='text'
+          name='state'
+          placeholder='State'
+          value={newAddress.state}
+          onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
+          required
+        />
+        <input
+          type='text'
+          name='zip_code'
+          placeholder='Zip Code'
+          value={newAddress.zip_code}
+          onChange={(e) => setNewAddress({ ...newAddress, zip_code: e.target.value })}
+          required
+        />
+        <button type='submit'>Submit</button>
+        <button type='button' onClick={() => setShowAddAddressForm(false)}>
+          Cancel
+        </button>
+      </form>
+    </div>
+  </div>
+)}
     </div>
   );
 };

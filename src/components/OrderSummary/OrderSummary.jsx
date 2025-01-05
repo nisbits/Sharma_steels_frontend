@@ -5,13 +5,13 @@ import "./OrderSummary.css";
 
 const OrderSummary = () => {
   const location = useLocation();
-  const { orderData, address } = location.state || {}; // address may include only address_id
+  const { orderData, address } = location.state || {}; 
   const navigate = useNavigate();
-  const [addressDetails, setAddressDetails] = useState(address || null); // Initialize with passed address or null
+  const [addressDetails, setAddressDetails] = useState(address || null);
 
   useEffect(() => {
     if (orderData && orderData.address_id && !addressDetails) {
-      fetchAddressById(orderData.address_id); // Fetch address details using address_id
+      fetchAddressById(orderData.address_id); 
     }
   }, [orderData, addressDetails]);
   
@@ -37,7 +37,10 @@ const OrderSummary = () => {
     }
   };
   
-
+ 
+  const handlePayment = () => {
+    navigate("/make-payment", { state: { orderData, address: addressDetails } });
+  };
   if (!orderData) {
     return <p>No order details found.</p>;
   }
@@ -144,7 +147,7 @@ const OrderSummary = () => {
 )}
 
 
-      <button className="add-address-button">Make Payment</button>
+      <button className="add-address-button"  onClick={handlePayment}>Make Payment</button>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import axios from "axios";
 import "./AddAddress.css";
 import { useNavigate } from "react-router-dom";
 
-const AddAddress = () => {
+const AddAddress = ({ onNewAddressAdded }) => {
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -57,7 +57,7 @@ const AddAddress = () => {
   const handleAddAddress = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("accessToken");
-
+  
     try {
       await axios.post(
         "http://sharmasteel.in:8080/user-accounts/addresses/",
@@ -69,21 +69,31 @@ const AddAddress = () => {
           },
         }
       );
-
+  
       const response = await axios.get(
         "http://sharmasteel.in:8080/user-accounts/addresses/",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setAddresses(response.data.user_Addresses || []);
+  
+      const newAddresses = response.data.user_Addresses || [];
+      const newAddress = newAddresses[newAddresses.length - 1]; // Get the newly added address
+  
+      setAddresses(newAddresses);
       setShowAddModal(false);
       setShowSuccessModal(true);
+  
+      // Call the callback to notify the parent component
+      if (onNewAddressAdded) {
+        onNewAddressAdded(newAddress);
+      }
     } catch (err) {
       console.error("Error adding address:", err);
       alert("Failed to add address. Please try again.");
     }
   };
+  
 
   const handleProceed = () => {
     if (!selectedAddress) {

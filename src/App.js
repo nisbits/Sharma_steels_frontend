@@ -11,6 +11,7 @@ import ProductDetail from './components/ProductDetail/ProductDetail';
 import Cart from './components/Cart/Cart';
 import OrderSummary from './components/OrderSummary/OrderSummary';
 import AddAddress from './components/AddAddress/AddAddress';
+import MakePayment from './components/MakePayment/MakePayment';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/cart" element={<Cart  />} />
           <Route path="/order-summary" element={<OrderSummary/>} />
           <Route path="/add-address" element={<AddAddress/>} />
+          <Route path="/make-payment" element={<MakePayment/>} />
                   </Routes>
       </div>
     </Router>

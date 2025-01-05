@@ -1,0 +1,29 @@
+.place-order-page{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 40px;
+}
+
+.place-order-button{
+    margin: 0px auto;
+    border-radius: 8px;
+    border:none;
+    background-color: rgb(89, 89, 211);
+    color: white;
+    padding: 10px 20px;
+}
+
+.payment-method-section-div{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.payment-method-section-div label{
+    display: flex;
+  gap: 4px;
+}
