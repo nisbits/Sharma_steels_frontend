@@ -1,0 +1,21 @@
+.order-success-container{
+text-align: center;
+display: flex;
+justify-content:  center;
+align-items: center;
+height: 60vh;
+}
+
+.order-success-container button{
+    border: none;
+    border-radius: 10px;
+    background-color: lightskyblue;
+    color: white;
+    padding: 10px 20px;
+}
+
+@media (max-width: 768px) {
+.order-success-container{
+    padding: 20px;
+}
+}

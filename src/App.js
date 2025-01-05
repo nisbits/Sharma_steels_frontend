@@ -10,9 +10,7 @@ import ProductCategory from './components/ProductCategory/ProductCategory'; // I
 import ProductDetail from './components/ProductDetail/ProductDetail';
 import Cart from './components/Cart/Cart';
 import OrderSummary from './components/OrderSummary/OrderSummary';
-import AddAddress from './components/AddAddress/AddAddress';
-import MakePayment from './components/MakePayment/MakePayment';
-
+import OrderSuccess from './components/OrderSuccess/OrderSuccess';
 function App() {
   return (
     <Router>
@@ -27,8 +25,8 @@ function App() {
           <Route path="/product_detail/:productId" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart  />} />
           <Route path="/order-summary" element={<OrderSummary/>} />
-          <Route path="/add-address" element={<AddAddress/>} />
-          <Route path="/make-payment" element={<MakePayment/>} />
+          <Route path="/order-success" element={<OrderSuccess/>} />
+
                   </Routes>
       </div>
     </Router>

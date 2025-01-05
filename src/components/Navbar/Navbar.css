@@ -27,7 +27,8 @@
     padding: 10px;
   background-color: #f8f8f8;
   border-radius: 8px;
-  width: 11%;
+  width: 17%;
+  cursor: pointer;
   }
 .custom-badge {
     position: absolute;

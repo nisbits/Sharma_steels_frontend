@@ -120,8 +120,10 @@ const ProductDetail = () => {
           "Content-Type": "application/json",
         },
       })
+    
       .then((response) => {
         const orderData = {
+          id:response.data.id,
           total_price: response.data.total_price,
           items: response.data.items,
           address_id: selectedAddress.id, // Include only the address ID

@@ -225,9 +225,10 @@ const Cart = ({ userId }) => {
         navigate("/order-summary", {
           state: {
             orderData: response.data,
-            address: selectedAddress, // Include the full selected address here
+            address: selectedAddress, 
           },
         });
+        console.log("response data from cart",response.data)
         setShowAddressModal(false);
       })
       .catch((error) => {
