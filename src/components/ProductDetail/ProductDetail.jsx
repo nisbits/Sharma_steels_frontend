@@ -126,7 +126,7 @@ const ProductDetail = () => {
           id:response.data.id,
           total_price: response.data.total_price,
           items: response.data.items,
-          address_id: selectedAddress.id, // Include only the address ID
+          address_id: selectedAddress.id, 
         };
   
         setShowAddressModal(false);

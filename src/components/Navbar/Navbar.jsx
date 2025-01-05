@@ -23,7 +23,7 @@ const Navbar = () => {
       const currentTime = Math.floor(Date.now() / 1000);
 
       if (decodedToken.exp && decodedToken.exp > currentTime) {
-        username = decodedToken.user_id || decodedToken.sub;
+        username = decodedToken.first_name|| decodedToken.sub;
       } else {
         console.warn("Token has expired");
         localStorage.removeItem("accessToken");
@@ -134,7 +134,7 @@ const Navbar = () => {
                         {addresses[0].city}, {addresses[0].state}{" "}
                         {addresses[0].country}-{addresses[0].zip_code}
                       </span>
-                      <p>Update Address</p>
+                      {/* <p>Update Address</p> */}
                     </>
                   )}
                 </div>

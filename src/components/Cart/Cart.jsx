@@ -131,7 +131,7 @@ const Cart = ({ userId }) => {
     updateQuantity(item.id, newQuantity);
   };
   const decreaseQuantity = (item) => {
-    const minOrderQuantity = item.product_details.minimum_order_quantity || 1;
+    const minOrderQuantity = item.product_details.minimum_order_quantity ;
 
     if (item.quantity <= minOrderQuantity) {
       console.log("Quantity is already at the minimum. API not called.");

@@ -124,4 +124,8 @@ gap: 10px;
     display: flex;
     gap: 10px;
   }
+  .address-section {
+    margin-left: -142px;
+    justify-content: flex-start;
+  }
 }
