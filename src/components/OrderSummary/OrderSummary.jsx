@@ -79,7 +79,7 @@ const OrderSummary = () => {
                 }
               );
               alert("Payment successful!");
-              navigate("/payment-success");
+              navigate("/order-success", { state: { orderId: orderData.id } });
             } catch (error) {
               console.error("Payment verification failed:", error);
               alert("Payment verification failed. Please try again.");
