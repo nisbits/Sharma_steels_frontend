@@ -20,10 +20,11 @@ const ProductDetail = () => {
   });
   const navigate = useNavigate();
   const { productId } = useParams();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     axios
-      .get(`http://sharmasteel.in:8080/products/product-details/${productId}`)
+      .get(`${apiUrl}/products/product-details/${productId}`)
       .then((response) => {
         const productData = response.data.product;
         setProduct(productData);
@@ -44,7 +45,7 @@ const ProductDetail = () => {
   
     try {
       const response = await axios.get(
-        "http://sharmasteel.in:8080/user-accounts/addresses/",
+        `${apiUrl}/user-accounts/addresses/`,
         {
           headers: { Authorization: `Bearer ${userToken}` },
         }
@@ -81,7 +82,7 @@ const ProductDetail = () => {
     };
 
     axios
-      .post('http://sharmasteel.in:8080/cart/add-to-cart/', cartData, {
+      .post(`${apiUrl}/cart/add-to-cart/`, cartData, {
         headers: {
           Authorization: `Bearer ${userToken}`,
           'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ const ProductDetail = () => {
     };
   
     axios
-      .post("http://sharmasteel.in:8080/cart/buy-now/", requestData, {
+      .post(`${apiUrl}/cart/buy-now/`, requestData, {
         headers: {
           Authorization: `Bearer ${userToken}`,
           "Content-Type": "application/json",
@@ -157,7 +158,7 @@ const ProductDetail = () => {
   
     try {
       await axios.post(
-        "http://sharmasteel.in:8080/user-accounts/addresses/",
+        `${apiUrl}/user-accounts/addresses/`,
         newAddress,
         {
           headers: {
@@ -168,7 +169,7 @@ const ProductDetail = () => {
       );
   
       const response = await axios.get(
-        "http://sharmasteel.in:8080/user-accounts/addresses/",
+        `${apiUrl}/user-accounts/addresses/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -196,13 +197,13 @@ const ProductDetail = () => {
       <div className='product-detail-container'>
         <div className='product-detail-img-container'>
           <img
-            src={`http://sharmasteel.in:8080${product.product_image_main}`}
+            src={`${apiUrl}${product.product_image_main}`}
             alt='Main Product'
           />
           {product.additional_images.map((img, index) => (
             <img
               key={index}
-              src={`http://sharmasteel.in:8080${img.image}`}
+              src={`${apiUrl}${img.image}`}
               alt={`Additional ${index + 1}`}
             />
           ))}

@@ -4,6 +4,7 @@ import Header from '../Header/Header'
 import ProductsList from '../ProductsList/ProductsList'
 
 const Home = () => {
+  
   return (
     <div>
       <ProductsList/>

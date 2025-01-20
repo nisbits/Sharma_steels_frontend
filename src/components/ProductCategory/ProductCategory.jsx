@@ -12,9 +12,10 @@ const ProductCategory = ({}) => {
   const navigate = useNavigate(); // Initialize navigate
   const [products, setProducts] = useState([]);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    fetch(`http://sharmasteel.in:8080/products/product-listing/catagory/${encodeURIComponent(id)}`)
+    fetch(`${apiUrl}/products/product-listing/catagory/${encodeURIComponent(id)}`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`Failed to fetch products for category ID: ${id}`);
@@ -37,7 +38,7 @@ const ProductCategory = ({}) => {
     return <div>Loading...</div>;
   }
 
-  const baseUrl = 'http://sharmasteel.in:8080';
+  const baseUrl = `${apiUrl}`;
 
   const handleProductClick = (productId) => {
     navigate(`/product_detail/${productId}`);

@@ -7,6 +7,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
@@ -21,7 +22,7 @@ const Login = () => {
 
   
     try {
-      const response = await fetch('http://sharmasteel.in:8080/user-accounts/token/refresh/', {
+      const response = await fetch(`${apiUrl}/user-accounts/token/refresh/`, {
         method: 'POST', 
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +57,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://sharmasteel.in:8080/user-accounts/login/', {
+      const response = await fetch(`${apiUrl}user-accounts/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

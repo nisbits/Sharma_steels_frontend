@@ -4,6 +4,8 @@ import axios from "axios";
 import "./OrderSummary.css";
 
 const OrderSummary = () => {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const location = useLocation();
   const { orderData, address } = location.state || {}; 
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ const OrderSummary = () => {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.get(
-        "http://sharmasteel.in:8080/user-accounts/addresses/",
+        `${apiUrl}/user-accounts/addresses/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -45,7 +47,7 @@ const OrderSummary = () => {
     if (paymentMethod === "Online") {
       try {
         const response = await axios.post(
-          "http://sharmasteel.in:8080/order/create-order/",
+          `${apiUrl}/order/create-order/`,
           { order_summary_id: orderData.id, payment_method: "online" },
           {
             headers: {
@@ -66,7 +68,7 @@ const OrderSummary = () => {
           handler: async function (response) {
             try {
               await axios.post(
-                "http://sharmasteel.in:8080/payments/verify-payment/",
+                `${apiUrl}/payments/verify-payment/`,
                 {
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_order_id: response.razorpay_order_id,
@@ -107,7 +109,7 @@ const OrderSummary = () => {
     } else if (paymentMethod === "COD") {
       try {
         await axios.post(
-          "http://sharmasteel.in:8080/order/create-order/",
+          `${apiUrl}/order/create-order/`,
           { order_summary_id: orderData.id, payment_method: "cod" },
           {
             headers: {

@@ -6,6 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const [phone_no, setPhoneNo] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtpInput, setShowOtpInput] = useState(false);
@@ -42,7 +44,7 @@ const Register = () => {
     }
 
     axios
-      .post("http://sharmasteel.in:8080/user-accounts/send-otp/", { phone_no })
+      .post(`${apiUrl}/user-accounts/send-otp/`, { phone_no })
       .then((response) => {
         if (
           response.status === 200 &&
@@ -74,7 +76,7 @@ const Register = () => {
     }
 
     axios
-      .post("http://sharmasteel.in:8080/user-accounts/verify-otp/", {
+      .post(`${apiUrl}/user-accounts/verify-otp/`, {
         phone_no,
         otp,
       })
@@ -136,7 +138,7 @@ const Register = () => {
     };
   
     axios
-      .post("http://sharmasteel.in:8080/user-accounts/register/", registrationData)
+      .post(`${apiUrl}/user-accounts/register/`, registrationData)
       .then((response) => {
         if (response.status === 201) {
           toast.success("Registration successful");

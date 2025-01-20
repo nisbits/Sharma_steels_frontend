@@ -5,6 +5,7 @@ import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Cart = ({ userId }) => {
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
@@ -35,7 +36,7 @@ const Cart = ({ userId }) => {
     }
 
     axios
-      .get(`http://sharmasteel.in:8080/cart/items/`, {
+      .get(`${apiUrl}/cart/items/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -63,7 +64,7 @@ const Cart = ({ userId }) => {
     const token = localStorage.getItem("accessToken");
 
     axios
-      .get(`http://sharmasteel.in:8080/cart/get-subtotal/`, {
+      .get(`${apiUrl}/cart/get-subtotal/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -86,7 +87,7 @@ const Cart = ({ userId }) => {
 
     axios
       .post(
-        `http://sharmasteel.in:8080/cart/update-quantity/`,
+        `${apiUrl}/cart/update-quantity/`,
         {
           cart_item_id: cartItemId,
           quantity: newQuantity,
@@ -149,7 +150,7 @@ const Cart = ({ userId }) => {
     const token = localStorage.getItem("accessToken");
 
     axios
-      .delete(`http://sharmasteel.in:8080/cart/delete-item/`, {
+      .delete(`${apiUrl}/cart/delete-item/`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -181,7 +182,7 @@ const Cart = ({ userId }) => {
 
     try {
       const response = await axios.get(
-        "http://sharmasteel.in:8080/user-accounts/addresses/",
+        `${apiUrl}/user-accounts/addresses/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -212,7 +213,7 @@ const Cart = ({ userId }) => {
 
     axios
       .post(
-        "http://sharmasteel.in:8080/cart/create-order-summary/",
+        `${apiUrl}/cart/create-order-summary/`,
         { address_id: selectedAddress.id },
         {
           headers: {
@@ -246,7 +247,7 @@ const Cart = ({ userId }) => {
 
     try {
       await axios.post(
-        "http://sharmasteel.in:8080/user-accounts/addresses/",
+        `${apiUrl}/user-accounts/addresses/`,
         newAddress,
         {
           headers: {
@@ -257,7 +258,7 @@ const Cart = ({ userId }) => {
       );
 
       const response = await axios.get(
-        "http://sharmasteel.in:8080/user-accounts/addresses/",
+        `${apiUrl}/user-accounts/addresses/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -278,7 +279,7 @@ const Cart = ({ userId }) => {
   };
 
   if (loading) return <p>Loading...</p>;
-  const baseUrl = "http://sharmasteel.in:8080";
+  const baseUrl = `${apiUrl}`;
   return (
     <div className="cart-main-container">
       <h2>Your Cart</h2>

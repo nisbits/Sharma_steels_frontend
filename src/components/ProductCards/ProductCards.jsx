@@ -4,13 +4,15 @@ import productPlaceholder from '../../Assets/images/lights-89.jpg'; // Fallback 
 import { useNavigate } from 'react-router-dom';
 
 const ProductCards = () => {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://sharmasteel.in:8080/products/product-listing/Home-page/')
+    fetch(`${apiUrl}/products/product-listing/Home-page/`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch products');
@@ -39,7 +41,7 @@ const ProductCards = () => {
   const handleProductClick = (productId) => {
     navigate(`/product_detail/${productId}`); 
   };
-  const baseUrl = 'http://sharmasteel.in:8080'; 
+  const baseUrl = `${apiUrl}`; 
 
   return (
     <div className="product-cards-container">

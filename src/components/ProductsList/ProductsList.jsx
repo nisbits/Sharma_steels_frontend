@@ -8,9 +8,10 @@ const ProductsList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    fetch("http://Sharmasteel.in:8080/products/product-catagory/")
+    fetch(`${apiUrl}/products/product-catagory/`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch categories");
@@ -63,7 +64,7 @@ const ProductsList = () => {
             <img
               src={
                 category.catagory_image
-                  ? `http://Sharmasteel.in:8080${category.catagory_image}`
+                  ? `${apiUrl}${category.catagory_image}`
                   : cementImage
               }
               alt={category.catagory || "Category"}

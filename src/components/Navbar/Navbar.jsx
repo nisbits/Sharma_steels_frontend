@@ -9,6 +9,8 @@ import { IoCartOutline } from "react-icons/io5";
 import { FaLocationDot } from "react-icons/fa6";
 
 const Navbar = () => {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const navigate = useNavigate();
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [addresses, setAddresses] = useState([]); // To store addresses
@@ -41,7 +43,7 @@ const Navbar = () => {
 
       try {
         const response = await axios.get(
-          `http://sharmasteel.in:8080/cart/items/`,
+          `${apiUrl}/cart/items/`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -69,7 +71,7 @@ const Navbar = () => {
       try {
         console.log("Fetching addresses with token:", token); // Log token
         const response = await axios.get(
-          "http://sharmasteel.in:8080/user-accounts/addresses/",
+          `${apiUrl}/user-accounts/addresses/`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
