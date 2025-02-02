@@ -67,7 +67,7 @@ const Navbar = () => {
         setLoading(false);
         return;
       }
-
+console.log('login Api', `${apiUrl}/user-accounts/addresses/` )
       try {
         console.log("Fetching addresses with token:", token); // Log token
         const response = await axios.get(

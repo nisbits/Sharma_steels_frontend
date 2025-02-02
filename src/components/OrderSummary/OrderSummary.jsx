@@ -156,7 +156,7 @@ const OrderSummary = () => {
           <div className="product-image-container">
             <div className="image-badge-span">
               <img
-                src={`http://sharmasteel.in:8080${item.product_details.product_image_main}`}
+                src={`${apiUrl}${item.product_details.product_image_main}`}
                 alt={item.product_details.brand_name}
                 className="product-image12"
               />
