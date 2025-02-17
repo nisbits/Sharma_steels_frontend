@@ -16,7 +16,8 @@ const Navbar = () => {
   const [addresses, setAddresses] = useState([]); // To store addresses
   const [loading, setLoading] = useState(true); // To track loading state
   const token = localStorage.getItem("accessToken");
-
+  const [modalContent, setModalContent] = useState(null); // To store modal content
+  const [isModalOpen, setIsModalOpen] = useState(false);
   let username = null;
 
   if (token) {
@@ -25,7 +26,7 @@ const Navbar = () => {
       const currentTime = Math.floor(Date.now() / 1000);
 
       if (decodedToken.exp && decodedToken.exp > currentTime) {
-        username = decodedToken.first_name|| decodedToken.sub;
+        username = decodedToken.first_name || decodedToken.sub;
       } else {
         console.warn("Token has expired");
         localStorage.removeItem("accessToken");
@@ -42,12 +43,9 @@ const Navbar = () => {
       if (!token) return;
 
       try {
-        const response = await axios.get(
-          `${apiUrl}/cart/items/`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get(`${apiUrl}/cart/items/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         const items = response.data.cart_items || [];
         const total = items.reduce((acc, item) => acc + item.quantity, 0);
@@ -67,15 +65,12 @@ const Navbar = () => {
         setLoading(false);
         return;
       }
-console.log('login Api', `${apiUrl}/user-accounts/addresses/` )
+
       try {
         console.log("Fetching addresses with token:", token); // Log token
-        const response = await axios.get(
-          `${apiUrl}/user-accounts/addresses/`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await axios.get(`${apiUrl}/user-accounts/addresses/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         console.log("API Response:", response.data); // Log API response
 
@@ -98,6 +93,16 @@ console.log('login Api', `${apiUrl}/user-accounts/addresses/` )
   const handleLogin = () => {
     navigate("/login");
   };
+  const handleProfileImageClick = async () => {
+    try {
+      console.log("Profile image clicked");
+      const response = await axios.get(`${apiUrl}/legal/`);
+      setModalContent(response.data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching legal content:", error);
+    }
+  };
 
   const handleRegister = () => {
     navigate("/register");
@@ -105,6 +110,9 @@ console.log('login Api', `${apiUrl}/user-accounts/addresses/` )
 
   const handleLogo = () => {
     navigate("/");
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   const handleLogout = () => {
@@ -144,7 +152,11 @@ console.log('login Api', `${apiUrl}/user-accounts/addresses/` )
             </div>
             <div className="all-details">
               <span className="username-display">
-                <img src={profileImage} alt="Profile" />
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  onClick={handleProfileImageClick}
+                />
                 {username}
               </span>
               <button onClick={handleLogout}>Logout</button>
@@ -163,13 +175,28 @@ console.log('login Api', `${apiUrl}/user-accounts/addresses/` )
               <p>Test Address, Demo City</p>
             </div>
             <div className="login-register-btn">
-            <button onClick={handleLogin}>Login</button>
-            <button onClick={handleRegister}>Register</button>
+              <button onClick={handleLogin}>Login</button>
+              <button onClick={handleRegister}>Register</button>
             </div>
-
           </>
         )}
       </div>
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content-term">
+            <button className="close-button" onClick={closeModal}>
+              Close
+            </button>
+            {modalContent &&
+              modalContent.map((item) => (
+                <div key={item.id} className="legal-item">
+                  <h3>{item.title}</h3>
+                  <p style={{ whiteSpace: "pre-wrap" }}>{item.content}</p>{" "}
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

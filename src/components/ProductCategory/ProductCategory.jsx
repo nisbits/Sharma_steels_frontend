@@ -56,7 +56,7 @@ const ProductCategory = ({}) => {
 
   return (
     <div className="product-category-container">
-      {console.log("Category Name ===>>>", location.state?.categoryName)}
+      {/* {console.log("Category Name ===>>>", location.state?.categoryName)} */}
       <h2>
         <img src={cementImage} alt="Category" />
         {location.state?.categoryName}
