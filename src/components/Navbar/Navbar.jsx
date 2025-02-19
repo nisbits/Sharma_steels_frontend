@@ -94,14 +94,7 @@ const Navbar = () => {
     navigate("/login");
   };
   const handleProfileImageClick = async () => {
-    try {
-      console.log("Profile image clicked");
-      const response = await axios.get(`${apiUrl}/legal/`);
-      setModalContent(response.data);
-      setIsModalOpen(true);
-    } catch (error) {
-      console.error("Error fetching legal content:", error);
-    }
+   navigate('/feedback')
   };
 
   const handleRegister = () => {
@@ -181,28 +174,13 @@ const Navbar = () => {
           </>
         )}
       </div>
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content-term">
-            <button className="close-button" onClick={closeModal}>
-              Close
-            </button>
-            {modalContent &&
-              modalContent.map((item) => (
-                <div key={item.id} className="legal-item">
-                  <h3>{item.title}</h3>
-                  <p style={{ whiteSpace: "pre-wrap" }}>{item.content}</p>{" "}
-                </div>
-              ))}
-          </div>
-        </div>
-      )}
+     
     </div>
   );
 };
 
 export default Navbar;
-
+{/* <p style={{ whiteSpace: "pre-wrap" }}>{item.content}</p>{" "} */}
 // import React, { useEffect, useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 // import { jwtDecode } from 'jwt-decode';

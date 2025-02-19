@@ -1,0 +1,12 @@
+.legal-container{
+    padding: 20px;
+}
+.legal-container .legal-item a{
+    color: black;
+}
+
+.legal-item{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}

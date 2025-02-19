@@ -1,0 +1,19 @@
+.feedback-container{
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* .feedback-container .legal-item ul{
+    display: flex;
+    justify-content: space-between;
+} */
+
+.feedback-container p a{
+    color: black;
+}
+
+.feedback-container p{
+    display: flex;
+    justify-content: space-between;
+}
