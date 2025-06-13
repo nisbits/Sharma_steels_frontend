@@ -15,11 +15,13 @@ import Feedback from './components/Feedback/Feedback';
 import Legal from './components/Legal/Legal';
 import Contact from './components/Contact/Contact';
 import LegalDetail from './components/LegalDetail/LegalDetail';
+
 function App() {
+
   return (
     <Router>
       <div className="App">
-        <Navbar />
+        <Navbar/>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

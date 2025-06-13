@@ -7,12 +7,12 @@ import "./Navbar.css";
 import profileImage from "../../Assets/images/profile.jpg";
 import { IoCartOutline } from "react-icons/io5";
 import { FaLocationDot } from "react-icons/fa6";
+import { useCart } from "../../context/CartContext";
 
 const Navbar = () => {
   const apiUrl = process.env.REACT_APP_API_URL;
-
+  const { cartQuantity, setCartQuantity } = useCart();
   const navigate = useNavigate();
-  const [totalQuantity, setTotalQuantity] = useState(0);
   const [addresses, setAddresses] = useState([]); // To store addresses
   const [loading, setLoading] = useState(true); // To track loading state
   const token = localStorage.getItem("accessToken");
@@ -49,14 +49,16 @@ const Navbar = () => {
 
         const items = response.data.cart_items || [];
         const total = items.reduce((acc, item) => acc + item.quantity, 0);
-        setTotalQuantity(total);
+        setCartQuantity(total); // use context
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
     };
 
     fetchCartQuantity();
-  }, [token]);
+  }, [token, setCartQuantity]);
+console.log("Navbar rendered, cartQuantity:", cartQuantity);
+
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -94,7 +96,7 @@ const Navbar = () => {
     navigate("/login");
   };
   const handleProfileImageClick = async () => {
-   navigate('/feedback')
+    navigate("/feedback");
   };
 
   const handleRegister = () => {
@@ -155,8 +157,8 @@ const Navbar = () => {
               <button onClick={handleLogout}>Logout</button>
               <div className="cart-container-icon">
                 <IoCartOutline onClick={handleCart} className="cart-icon" />
-                {totalQuantity > 0 && (
-                  <span className="custom-badge">{totalQuantity}</span>
+                {cartQuantity > 0 && (
+                  <span className="custom-badge">{cartQuantity}</span>
                 )}
               </div>
             </div>
@@ -174,13 +176,14 @@ const Navbar = () => {
           </>
         )}
       </div>
-     
     </div>
   );
 };
 
 export default Navbar;
-{/* <p style={{ whiteSpace: "pre-wrap" }}>{item.content}</p>{" "} */}
+{
+  /* <p style={{ whiteSpace: "pre-wrap" }}>{item.content}</p>{" "} */
+}
 // import React, { useEffect, useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 // import { jwtDecode } from 'jwt-decode';

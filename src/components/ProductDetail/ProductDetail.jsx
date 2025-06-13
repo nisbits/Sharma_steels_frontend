@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './ProductDetail.css';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 
 const ProductDetail = () => {
   const [product, setProduct] = useState(null);
@@ -21,6 +22,7 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { productId } = useParams();
   const apiUrl = process.env.REACT_APP_API_URL;
+const { setCartQuantity } = useCart();
 
   useEffect(() => {
     axios
@@ -54,7 +56,6 @@ const ProductDetail = () => {
       const fetchedAddresses = response.data.user_Addresses || [];
       setAddresses(fetchedAddresses);
   
-      // Set the first address as the default selected address if available
       if (fetchedAddresses.length > 0) {
         setSelectedAddress(fetchedAddresses[0]);
       }
@@ -67,36 +68,52 @@ const ProductDetail = () => {
   };
   
 
-  const handleAddToCart = () => {
-    const userToken = localStorage.getItem('accessToken');
-    if (!userToken) {
-      alert('Please log in to add items to your cart.');
-      navigate('/login');
-      return;
-    }
+const handleAddToCart = () => {
+  const userToken = localStorage.getItem('accessToken');
+  if (!userToken) {
+    alert('Please log in to add items to your cart.');
+    navigate('/login');
+    return;
+  }
 
-    const cartData = {
-      product_id: productId,
-      quantity: quantity,
-      minimum_order_quantity: product.minimum_order_quantity,
-    };
-
-    axios
-      .post(`${apiUrl}/cart/add-to-cart/`, cartData, {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((response) => {
-        console.log('Item added to cart successfully:', response.data);
-        alert('Item added to cart successfully!');
-      })
-      .catch((error) => {
-        console.error('Error adding item to cart:', error);
-        alert('Failed to add item to cart. Please try again.');
-      });
+  const cartData = {
+    product_id: productId,
+    quantity: quantity,
+    minimum_order_quantity: product.minimum_order_quantity,
   };
+
+  axios
+    .post(`${apiUrl}/cart/add-to-cart/`, cartData, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => {
+      console.log('Item added to cart successfully:', response.data);
+
+      axios
+        .get(`${apiUrl}/cart/items/`, {
+          headers: { Authorization: `Bearer ${userToken}` },
+        })
+        .then((res) => {
+          const items = res.data.cart_items || [];
+          const total = items.reduce((acc, item) => acc + item.quantity, 0);
+          setCartQuantity(total);
+         
+        })
+        .catch((err) => {
+          console.error("Failed to fetch updated cart:", err);
+        });
+
+      alert('Item added to cart successfully!');
+    })
+    .catch((error) => {
+      console.error('Error adding item to cart:', error);
+      alert('Failed to add item to cart. Please try again.');
+    });
+};
+
 
   const handleBuyNow = () => {
     fetchAddresses(); 

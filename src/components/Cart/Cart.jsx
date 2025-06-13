@@ -3,10 +3,12 @@ import axios from "axios";
 import "./Cart.css";
 import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 
 const Cart = ({ userId }) => {
   const apiUrl = process.env.REACT_APP_API_URL;
   const [cartItems, setCartItems] = useState([]);
+  const { setCartQuantity } = useCart();
   const [loading, setLoading] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
   const [subtotal, setSubtotal] = useState(0);
@@ -58,6 +60,8 @@ const Cart = ({ userId }) => {
   const calculateTotalItems = (items) => {
     const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
     setTotalItems(totalQuantity);
+    setCartQuantity(totalQuantity);
+    console.log("Cart updated quantity:", totalQuantity);
   };
 
   const fetchSubtotal = () => {
@@ -100,7 +104,7 @@ const Cart = ({ userId }) => {
         }
       )
       .then((response) => {
-        console.log("API Response:", response.data);
+    
         const updatedItem = response.data;
 
         setCartItems((prevItems) => {
@@ -113,6 +117,7 @@ const Cart = ({ userId }) => {
                 }
               : item
           );
+       
           calculateTotalItems(newItems);
           fetchSubtotal();
           return newItems;
@@ -132,12 +137,13 @@ const Cart = ({ userId }) => {
     updateQuantity(item.id, newQuantity);
   };
   const decreaseQuantity = (item) => {
-    const minOrderQuantity = item.product_details.minimum_order_quantity ;
-
+    const minOrderQuantity = item.product_details.minimum_order_quantity;
+    console.log("min quantity", minOrderQuantity);
     if (item.quantity <= minOrderQuantity) {
       console.log("Quantity is already at the minimum. API not called.");
       return;
     }
+
     const newQuantity = item.quantity - 1;
     updateQuantity(item.id, newQuantity);
   };
@@ -181,12 +187,9 @@ const Cart = ({ userId }) => {
     }
 
     try {
-      const response = await axios.get(
-        `${apiUrl}/user-accounts/addresses/`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await axios.get(`${apiUrl}/user-accounts/addresses/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const fetchedAddresses = response.data.user_Addresses || [];
       setAddresses(fetchedAddresses);
@@ -226,10 +229,10 @@ const Cart = ({ userId }) => {
         navigate("/order-summary", {
           state: {
             orderData: response.data,
-            address: selectedAddress, 
+            address: selectedAddress,
           },
         });
-        console.log("response data from cart",response.data)
+        console.log("response data from cart", response.data);
         setShowAddressModal(false);
       })
       .catch((error) => {
@@ -246,23 +249,16 @@ const Cart = ({ userId }) => {
     const token = localStorage.getItem("accessToken");
 
     try {
-      await axios.post(
-        `${apiUrl}/user-accounts/addresses/`,
-        newAddress,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axios.post(`${apiUrl}/user-accounts/addresses/`, newAddress, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      const response = await axios.get(
-        `${apiUrl}/user-accounts/addresses/`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await axios.get(`${apiUrl}/user-accounts/addresses/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const updatedAddresses = response.data.user_Addresses || [];
       setAddresses(updatedAddresses);
@@ -406,7 +402,10 @@ const Cart = ({ userId }) => {
           <div className="modal-overlay">
             <div className="modal-content">
               <h2>Add New Address</h2>
-              <form onSubmit={handleAddNewAddress} className='addressmodal-div12'>
+              <form
+                onSubmit={handleAddNewAddress}
+                className="addressmodal-div12"
+              >
                 <input
                   type="text"
                   name="receiver_name"
