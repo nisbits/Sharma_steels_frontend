@@ -108,17 +108,22 @@ const OrderSummary = () => {
       }
     } else if (paymentMethod === "COD") {
       try {
-        await axios.post(
+        const res = await axios.post(
           `${apiUrl}/order/create-order/`,
-          { order_summary_id: orderData.id, payment_method: "cod" },
+          {
+            order_summary_id: orderData.id,
+            payment_method: "cod",
+          },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
           }
         );
+        console.log("result from summary page", res.data)
+console.log("order id at summary page", res.data.order_id)
         alert("Order placed successfully with COD!");
-        navigate("/order-success", { state: { orderId: orderData.id } });
+        navigate("/order-success", { state: { orderId: res.data.order_id } });
       } catch (error) {
         console.error("Error placing COD order:", error);
         alert("Failed to place the order. Please try again.");
