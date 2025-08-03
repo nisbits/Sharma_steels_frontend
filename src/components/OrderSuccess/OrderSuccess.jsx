@@ -6,7 +6,7 @@ const OrderSuccess = () => {
   const location = useLocation();
   const { orderId } = location.state || {}; // Get order ID from navigation state
   const navigate = useNavigate();
-
+console.log("order_id", orderId)
   return (
     <div className="order-success-container">
       <div className="success-message">
