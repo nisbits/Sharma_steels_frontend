@@ -300,7 +300,7 @@ const Cart = ({ userId }) => {
                         checked={selectedAddress?.id === address.id}
                         onChange={() => setSelectedAddress(address)}
                       />
-                      {`${address.city}, ${address.state}, ${address.country} - ${address.zip_code}`}
+                      <span>{`${address.city}, ${address.state}, ${address.country} - ${address.zip_code}`}</span>
                     </label>
                   </li>
                 ))}

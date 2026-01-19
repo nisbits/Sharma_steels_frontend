@@ -108,6 +108,10 @@ const Login = () => {
 
   return (
     <div className='login-container'>
+      <div className="login-header">
+        <h2>Welcome Back</h2>
+        <p>Login to your Sharma Steel account</p>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="exampleInputMobile">Mobile Number</label>
@@ -136,7 +140,7 @@ const Login = () => {
         </div>
         {error && <p className="error-message">{error}</p>}
         <button type="submit" className="btn btn-primary">
-          Submit
+          Login
         </button>
       </form>
     </div>

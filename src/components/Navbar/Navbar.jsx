@@ -5,7 +5,7 @@ import axios from "axios";
 import logoImage from "../../Assets/images/logo.jpeg";
 import "./Navbar.css";
 import profileImage from "../../Assets/images/profile.jpg";
-import { IoCartOutline } from "react-icons/io5";
+import { IoCartOutline, IoMenu, IoClose, IoHome } from "react-icons/io5";
 import { FaCaretDown, FaLocationDot } from "react-icons/fa6";
 import { useCart } from "../../context/CartContext";
 
@@ -16,7 +16,75 @@ const Navbar = () => {
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("accessToken");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // NEW state for dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Toggle mobile menu and prevent body scroll
+  const toggleMobileMenu = () => {
+    const newState = !isMobileMenuOpen;
+    setIsMobileMenuOpen(newState);
+    
+    // Prevent body scroll when menu is open
+    if (newState) {
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('nav-open');
+    } else {
+      document.body.style.overflow = '';
+      document.body.classList.remove('nav-open');
+    }
+  };
+
+  // Cleanup body styles on component unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+      document.body.classList.remove('nav-open');
+    };
+  }, []);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isDropdownOpen && !event.target.closest('.dropdown-wrapper')) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    // Handle window resize to reposition dropdown
+    const handleResize = () => {
+      if (isDropdownOpen) {
+        const dropdownElement = document.querySelector('.dropdown-menu');
+        const wrapperElement = document.querySelector('.dropdown-wrapper');
+        
+        if (dropdownElement && wrapperElement) {
+          const rect = wrapperElement.getBoundingClientRect();
+          const isMobile = window.innerWidth <= 768;
+          
+          if (isMobile) {
+            // Align to right on mobile but with some padding
+            dropdownElement.style.top = `${rect.bottom + 10}px`;
+            dropdownElement.style.right = '10px';
+            dropdownElement.style.left = 'auto';
+            dropdownElement.style.transform = 'none';
+          } else {
+            // Position to the right on desktop
+            dropdownElement.style.top = `${rect.bottom + 5}px`;
+            dropdownElement.style.right = `${window.innerWidth - rect.right}px`;
+            dropdownElement.style.left = 'auto';
+            dropdownElement.style.transform = 'none';
+          }
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isDropdownOpen]);
   let username = null;
 
   if (token) {
@@ -86,50 +154,111 @@ const Navbar = () => {
     fetchAddresses();
   }, [token]);
 
-  const handleLogin = () => navigate("/login");
-  const handleProfileImageClick = () => navigate("/feedback");
-  const handleRegister = () => navigate("/register");
-  const handleLogo = () => navigate("/");
+  const handleLogin = () => {
+    handleMobileNavigation(() => navigate("/login"));
+  };
+  const handleProfileImageClick = () => {
+    handleMobileNavigation(() => navigate("/feedback"));
+  };
+  const handleRegister = () => {
+    handleMobileNavigation(() => navigate("/register"));
+  };
+  // Handle navigation clicks in mobile view
+  const handleMobileNavigation = (callback) => {
+    if (window.innerWidth <= 768) {
+      // Close mobile menu after navigation
+      setIsMobileMenuOpen(false);
+      document.body.style.overflow = '';
+      document.body.classList.remove('nav-open');
+    }
+    callback();
+  };
+
+  const handleHome = () => handleMobileNavigation(() => navigate("/"));
+  const handleCart = () => handleMobileNavigation(() => navigate("/cart"));
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     navigate("/");
   };
-  const handleCart = () => navigate("/cart");
 
   // Dropdown handlers
-  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
-  const goToMyOrders = () => {
-    navigate("/my-orders");
-    setIsDropdownOpen(false);
+  const toggleDropdown = () => {
+    const newState = !isDropdownOpen;
+    setIsDropdownOpen(newState);
+    
+    if (newState) {
+      // Position the dropdown menu
+      setTimeout(() => {
+        const dropdownElement = document.querySelector('.dropdown-menu');
+        const wrapperElement = document.querySelector('.dropdown-wrapper');
+        
+        if (dropdownElement && wrapperElement) {
+          const rect = wrapperElement.getBoundingClientRect();
+          const isMobile = window.innerWidth <= 768;
+          
+          if (isMobile) {
+            // Align to right on mobile but with some padding
+            dropdownElement.style.top = `${rect.bottom + 10}px`;
+            dropdownElement.style.right = '10px';
+            dropdownElement.style.left = 'auto';
+            dropdownElement.style.transform = 'none';
+          } else {
+            // Position to the right on desktop
+            dropdownElement.style.top = `${rect.bottom + 5}px`;
+            dropdownElement.style.right = `${window.innerWidth - rect.right}px`;
+            dropdownElement.style.left = 'auto';
+            dropdownElement.style.transform = 'none';
+          }
+        }
+      }, 0);
+    }
   };
+  const goToMyOrders = () => {
+    handleMobileNavigation(() => {
+      navigate("/my-orders");
+      setIsDropdownOpen(false);
+    });
+  };
+  
   const goToMyDetails = () => {
-    navigate("/my-details");
-    setIsDropdownOpen(false);
+    handleMobileNavigation(() => {
+      navigate("/my-details");
+      setIsDropdownOpen(false);
+    });
+  };
+
+  const handleLogo = () => {
+    navigate("/");
   };
 
   return (
-    <div className="navbar-container">
-      <div className="logo">
-        <img src={logoImage} alt="Logo" onClick={handleLogo} />
-      </div>
-      <div className="nav-buttons">
+    <div className="navbar-wrapper">
+      <div className="navbar-container">
+        <div className="logo">
+          <img src={logoImage} alt="Logo" onClick={handleLogo} />
+        </div>
+      
+      <button 
+        className="mobile-menu-toggle" 
+        onClick={toggleMobileMenu}
+      >
+        {isMobileMenuOpen ? <IoClose size={24} /> : <IoMenu size={24} />}
+      </button>
+
+      <div className={`nav-buttons ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
         {username ? (
           <>
+            <div className="home-btn" onClick={handleHome}>
+              <IoHome className="home-icon" />
+              <span>Home</span>
+            </div>
             <div className="address-section">
               <FaLocationDot style={{ marginTop: "7px" }} />
-              {loading ? (
-                <p>Loading...</p>
-              ) : (
-                <div>
-                  {addresses.length > 0 && (
-                    <>
-                      <span key={addresses[0].id}>
-                        {addresses[0].city}, {addresses[0].state}{" "}
-                        {addresses[0].country}-{addresses[0].zip_code}
-                      </span>
-                    </>
-                  )}
-                </div>
+            </div>
+            <div className="cart-container-icon">
+              <IoCartOutline onClick={handleCart} className="cart-icon" />
+              {cartQuantity > 0 && (
+                <span className="custom-badge">{cartQuantity}</span>
               )}
             </div>
             <div className="all-details">
@@ -151,12 +280,6 @@ const Navbar = () => {
                 )}
               </div>
               <button onClick={handleLogout}>Logout</button>
-              <div className="cart-container-icon">
-                <IoCartOutline onClick={handleCart} className="cart-icon" />
-                {cartQuantity > 0 && (
-                  <span className="custom-badge">{cartQuantity}</span>
-                )}
-              </div>
             </div>
           </>
         ) : (
@@ -165,6 +288,10 @@ const Navbar = () => {
               <FaLocationDot style={{ marginTop: "7px" }} />
               <p>Test Address, Demo City</p>
             </div>
+            <div className="home-btn" onClick={handleHome}>
+              <IoHome className="home-icon" />
+              <span>Home</span>
+            </div>
             <div className="login-register-btn">
               <button onClick={handleLogin}>Login</button>
               <button onClick={handleRegister}>Register</button>
@@ -172,6 +299,7 @@ const Navbar = () => {
           </>
         )}
       </div>
+    </div>
     </div>
   );
 };

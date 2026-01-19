@@ -30,60 +30,118 @@
     left: 0;
     width: 100%;
     height: 100%;
-    /* background: rgba(0, 0, 0, 0.5); */
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(5px);
   }
   
   .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    position: relative;
     text-align: center;
+  }
+  
+  .modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 20px 20px 0 0;
   }
   
   .modal-content ul {
     list-style: none;
     padding: 0;
+    margin-bottom: 30px;
   }
   
   .modal-content li {
-    padding: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
     cursor: pointer;
-    border-bottom: 1px solid #ddd;
-  }
-  .modal-content label{
-    display: flex;
-  margin-bottom: .5rem;
-  /* justify-content: center; */
-  align-items: center;
-  gap: 5px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: white;
+    text-align: left;
   }
   
   .modal-content li:hover {
-    background: #f0f0f0;
+    background: linear-gradient(145deg, #f8f9fa, #ffffff);
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+  }
+  
+  .modal-content label{
+    display: flex;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #374151;
+    align-items: center;
+    gap: 8px;
   }
   
   .addressmodal-div12{
     display: flex;
-  flex-direction: column;
-  gap: 10px;
+    flex-direction: column;
+    gap: 20px;
   }
+  
+  .addressmodal-div12 input,
+  .addressmodal-div12 select,
+  .addressmodal-div12 textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: white;
+    box-sizing: border-box;
+  }
+  
+  .addressmodal-div12 input:focus,
+  .addressmodal-div12 select:focus,
+  .addressmodal-div12 textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+  }
+  
   .modal-content button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    background: #007bff;
+    margin-top: 20px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    min-width: 120px;
   }
   
   .modal-content button:hover {
-    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
   }
   
 .product-detail-img-container img {

@@ -167,6 +167,11 @@ const Register = () => {
   return (
     <div className="register-container">
       <ToastContainer />
+      
+      <div className="register-header">
+        <h2>Create Account</h2>
+        <p>Join Sharma Steel today</p>
+      </div>
 
       {!showForm && (
         <div className="otp-form-container">
