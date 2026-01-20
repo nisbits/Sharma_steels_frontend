@@ -270,15 +270,22 @@ const Navbar = () => {
                 />
                 {username}
               </span>
-              <div className="dropdown-wrapper">
-                <FaCaretDown onClick={toggleDropdown} style={{ cursor: "pointer" }} />
-                {isDropdownOpen && (
-                  <div className="dropdown-menu">
-                    <button onClick={goToMyOrders}>My Orders</button>
-                    <button onClick={goToMyDetails}>My Details</button>
-                  </div>
-                )}
-              </div>
+              {window.innerWidth > 768 ? (
+                <div className="dropdown-wrapper">
+                  <FaCaretDown onClick={toggleDropdown} style={{ cursor: "pointer" }} />
+                  {isDropdownOpen && (
+                    <div className="dropdown-menu">
+                      <button onClick={goToMyOrders}>My Orders</button>
+                      <button onClick={goToMyDetails}>My Details</button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="mobile-tabs">
+                  <button onClick={goToMyOrders} className="mobile-tab-btn">My Orders</button>
+                  <button onClick={goToMyDetails} className="mobile-tab-btn">My Details</button>
+                </div>
+              )}
               <button onClick={handleLogout}>Logout</button>
             </div>
           </>

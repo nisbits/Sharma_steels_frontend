@@ -280,22 +280,24 @@ html, body {
   align-items: center;
   gap: 10px;
   padding: 14px 20px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border: none;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  border: 2px solid rgba(255, 255, 255, 0.4);
   border-radius: 25px;
   color: white;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3), 0 0 20px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   margin: 0 10px;
   min-width: 120px;
   justify-content: center;
+  backdrop-filter: blur(15px);
 }
 
 .home-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4), 0 0 30px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .home-icon {
@@ -614,6 +616,47 @@ html, body {
     z-index: 99999 !important;
     min-width: 250px !important;
     margin-top: 10px !important;
+  }
+
+  /* Mobile tabs for smaller screens */
+  .mobile-tabs {
+    display: none;
+    gap: 10px;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .mobile-tab-btn {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1)) !important;
+      border: 2px solid rgba(255, 255, 255, 0.4) !important;
+      border-radius: 25px !important;
+      padding: 12px 20px !important;
+      color: white !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      font-size: 14px !important;
+      transition: all 0.3s ease !important;
+      width: 100% !important;
+      min-width: 120px !important;
+      backdrop-filter: blur(15px) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .mobile-tab-btn:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+      border-color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    .dropdown-wrapper {
+      display: none;
+    }
   }
 }
 

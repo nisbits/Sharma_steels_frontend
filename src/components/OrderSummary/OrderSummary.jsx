@@ -69,7 +69,7 @@ const OrderSummary = () => {
           key: RAZORPAY_KEY_ID,
           amount,
           currency,
-          name: 'Your Company Name',
+          name: 'Sharma Steel',
           description: 'Order Payment',
           order_id: razorpay_order_id,
           handler: async (razorpayResponse) => {
