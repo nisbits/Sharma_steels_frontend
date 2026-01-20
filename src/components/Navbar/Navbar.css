@@ -477,6 +477,23 @@ html, body {
     border-radius: 0 0 12px 12px;
     z-index: 999;
   }
+
+  .nav-buttons .cart-container-icon {
+    position: fixed !important;
+    top: 12px !important;
+    right: 70px !important;
+    display: inline-flex !important;
+    margin: 0 !important;
+    z-index: 1001 !important;
+  }
+  
+  .nav-buttons.mobile-open .cart-container-icon {
+    display: inline-flex !important;
+    position: fixed !important;
+    top: 12px !important;
+    right: 70px !important;
+    left: auto !important;
+  }
   
   .navbar-container {
     padding: 12px 16px;

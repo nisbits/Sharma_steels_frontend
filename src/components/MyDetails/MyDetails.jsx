@@ -52,6 +52,7 @@ const MyDetails = () => {
           <p><strong>Username:</strong> {details.user?.username || "N/A"}</p>
           <p><strong>Email:</strong> {details.user?.email || "N/A"}</p>
           <p><strong>Phone Number:</strong> {details.phone_number || "N/A"}</p>
+          <p><strong>Address:</strong> {details.address || "N/A"}</p>
           <p><strong>User Category:</strong> {details.user_catagory || "N/A"}</p>
           <p><strong>Admin Approved:</strong> {details.admin_approved ? "Yes" : "No"}</p>
           <p><strong>Contractor Code:</strong> {details.contractor_code || "N/A"}</p>
